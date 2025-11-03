@@ -7,8 +7,66 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Hello World! My name is Akshay Malhotra.</h1>
-    </div>
+    <nav class="navbar">
+        <div class="hamburger-menu">
+            <div class="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <span class="current-section">Home</span>
+            <div class="menu-dropdown">
+                <a href="#home" class="nav-link" data-section="Home">Home</a>
+                <a href="#about" class="nav-link" data-section="About Me">About Me</a>
+                <a href="#skills" class="nav-link" data-section="Skills">Skills</a>
+                <a href="#projects" class="nav-link" data-section="Projects">Projects</a>
+                <a href="#experience" class="nav-link" data-section="Experience">Experience</a>
+                <a href="#education" class="nav-link" data-section="Education">Education</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="section hero-section" data-section-file="sections/home.html">
+        <div class="container">
+            <h1>Hello World! My name is Akshay Malhotra.</h1>
+        </div>
+    </section>
+
+    <section id="about" class="section" data-section-file="sections/about.html">
+        <div class="container">
+            <h2>About Me</h2>
+            <p>Add your introduction, background, interests, and what you do here.</p>
+        </div>
+    </section>
+
+    <section id="skills" class="section" data-section-file="sections/skills.html">
+        <div class="container">
+            <h2>Skills</h2>
+            <p>Add your technical skills, programming languages, frameworks, and tools here.</p>
+        </div>
+    </section>
+
+    <section id="projects" class="section" data-section-file="sections/projects.html">
+        <div class="container">
+            <h2>Projects</h2>
+            <p>Showcase your best work with descriptions, screenshots, and links here.</p>
+        </div>
+    </section>
+
+    <section id="experience" class="section" data-section-file="sections/experience.html">
+        <div class="container">
+            <h2>Experience</h2>
+            <p>test</p>
+        </div>
+    </section>
+
+    <section id="education" class="section" data-section-file="sections/education.html">
+        <div class="container">
+            <h2>Education</h2>
+            <p>Add your degrees, certifications, and relevant coursework here.</p>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
 </body>
 </html>
