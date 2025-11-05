@@ -1,9 +1,20 @@
 import { alexBrush } from './fonts'
+import Image from 'next/image'
 
 export default function Home() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream">
       <div className="text-center p-8 max-w-5xl">
+        <div className="mb-12 flex justify-center">
+          <Image
+            src="/assets/logo.png"
+            alt="Akshay Malhotra Logo"
+            width={300}
+            height={300}
+            className="w-48 h-48 md:w-64 md:h-64"
+            priority
+          />
+        </div>
         <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
           <span className="text-maroon block mb-4">Hello, World!</span>
           <span className="text-teal block mb-4">This is</span>
