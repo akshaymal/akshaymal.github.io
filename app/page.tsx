@@ -1,4 +1,4 @@
-import { alexBrush } from './layout'
+import { alexBrush } from './fonts'
 
 export default function Home() {
   return (
