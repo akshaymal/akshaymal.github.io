@@ -3,11 +3,11 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cream">
+    <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="text-center p-8 max-w-5xl">
         <div className="mb-12 flex justify-center">
           <Image
-            src="/assets/logo.png"
+            src="/assets/logo2.png"
             alt="Akshay Malhotra Logo"
             width={300}
             height={300}
