@@ -34,3 +34,6 @@ next-env.d.ts
 
 # brainstorming companion scratch
 .superpowers/
+
+# lighthouse ci reports
+.lighthouseci/
