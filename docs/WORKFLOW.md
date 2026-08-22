@@ -50,11 +50,13 @@ Every issue gets exactly one Type, one Priority, one Area label.
 
 ## Lighthouse CI status
 
-Currently **non-blocking** (`.lighthouserc.json` has no failing assertions) because there's no real content yet to score meaningfully against a budget. Once Spec 2 ships real content, file an issue (`area:infra`) to add real assertion thresholds and make the job blocking.
+Currently **non-blocking** (`.lighthouserc.json` has no assertions configured) because there's no real content yet to score meaningfully against a budget. Tracked as [#7](https://github.com/akshaymal/akshaymalhotra.dev/issues/7).
 
-## Backlog (filed as issues once `gh` is set up)
+## Backlog
 
-- Logo/mark design
-- Real contact form (replacing `mailto:`)
-- Blog (MDX/CMS-backed)
-- Lighthouse CI promotion to blocking
+Filed as GitHub issues (none of these are `agent-ready` yet — each needs a pass through `issue-refiner` before pickup):
+
+- [#4](https://github.com/akshaymal/akshaymalhotra.dev/issues/4) — Logo/mark design
+- [#5](https://github.com/akshaymal/akshaymalhotra.dev/issues/5) — Real contact form (replacing `mailto:`)
+- [#6](https://github.com/akshaymal/akshaymalhotra.dev/issues/6) — Blog (MDX/CMS-backed)
+- [#7](https://github.com/akshaymal/akshaymalhotra.dev/issues/7) — Lighthouse CI promotion to blocking
