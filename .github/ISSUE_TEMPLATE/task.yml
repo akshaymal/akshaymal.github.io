@@ -1,0 +1,65 @@
+name: Task
+description: A unit of work for this project (feature, content, chore, or bug)
+title: "[TYPE] <short summary>"
+labels: []
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options:
+        - feature
+        - content
+        - chore
+        - bug
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P1
+        - P2
+        - P3
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - content
+        - ui
+        - seo
+        - infra
+        - harness
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description / context
+      description: What needs to happen and why.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Checklist of conditions that must be true for this to be done.
+      value: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of done
+      value: |
+        - [ ] Build passes (`npm run build`)
+        - [ ] Lint and typecheck pass
+        - [ ] Docs updated if applicable
+    validations:
+      required: true
