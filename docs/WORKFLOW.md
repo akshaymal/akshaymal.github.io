@@ -6,16 +6,21 @@ This document is the full reference for how work moves from idea to shipped code
 
 1. Install and authenticate `gh`: `gh auth login`.
 2. Create labels: `bash scripts/setup-labels.sh`.
-3. Enable branch protection on `main` (requires repo admin):
+3. Enable branch protection on `main` (requires repo admin). `gh api --field` does not accept nested JSON objects (it treats each value as a literal string, which the API then rejects) — write a payload file and use `--input` instead:
    ```bash
-   gh api repos/:owner/:repo/branches/main/protection \
-     --method PUT \
-     --field required_status_checks='{"strict":true,"contexts":["verify"]}' \
-     --field enforce_admins=true \
-     --field required_pull_request_reviews='{"required_approving_review_count":0}' \
-     --field restrictions=null
+   cat <<'JSON' > /tmp/branch-protection.json
+   {
+     "required_status_checks": { "strict": true, "contexts": ["verify"] },
+     "enforce_admins": true,
+     "required_pull_request_reviews": { "required_approving_review_count": 0 },
+     "restrictions": null
+   }
+   JSON
+   gh api repos/:owner/:repo/branches/main/protection --method PUT --input /tmp/branch-protection.json
    ```
    `required_approving_review_count` is `0`, not `1`, because this is a solo-maintained repo — GitHub doesn't let a PR author approve their own PR, so a count of `1` combined with `enforce_admins: true` would lock you out of merging your own PRs. The real guardrails here are "no direct pushes to `main`" (this setting) and "CI must pass" (the `required_status_checks` above) — the human-in-the-loop step is you reviewing the diff before clicking merge, not a separate GitHub approval. If this repo ever gets a second maintainer, raise this back to `1`.
+   
+   (Already applied to this repo as of 2026-08-22 — this step is here for reference/future clones, not something you need to re-run.)
 4. Local git hook: `git config core.hooksPath scripts/git-hooks`.
 
 ## Label taxonomy (fixed — do not add ad-hoc labels)
