@@ -12,9 +12,10 @@ This document is the full reference for how work moves from idea to shipped code
      --method PUT \
      --field required_status_checks='{"strict":true,"contexts":["verify"]}' \
      --field enforce_admins=true \
-     --field required_pull_request_reviews='{"required_approving_review_count":1}' \
+     --field required_pull_request_reviews='{"required_approving_review_count":0}' \
      --field restrictions=null
    ```
+   `required_approving_review_count` is `0`, not `1`, because this is a solo-maintained repo — GitHub doesn't let a PR author approve their own PR, so a count of `1` combined with `enforce_admins: true` would lock you out of merging your own PRs. The real guardrails here are "no direct pushes to `main`" (this setting) and "CI must pass" (the `required_status_checks` above) — the human-in-the-loop step is you reviewing the diff before clicking merge, not a separate GitHub approval. If this repo ever gets a second maintainer, raise this back to `1`.
 4. Local git hook: `git config core.hooksPath scripts/git-hooks`.
 
 ## Label taxonomy (fixed — do not add ad-hoc labels)
