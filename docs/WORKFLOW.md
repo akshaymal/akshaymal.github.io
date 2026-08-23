@@ -44,6 +44,7 @@ Every issue gets exactly one Type, one Priority, one Area label.
    - Implements against the acceptance criteria, following `CLAUDE.md`.
    - Self-verifies: lint, typecheck, build, plus an `npm@10`-pinned `npm ci --dry-run` when `package.json`/`package-lock.json` changed (catches npm-version-dependent lockfile drift before it reaches CI — see [#12](https://github.com/akshaymal/akshaymalhotra.dev/issues/12)).
    - Dispatches a **fresh, context-free subagent** to run the `code-review` skill against the diff — independent scrutiny with no exposure to the implementation reasoning.
+   - Checks docs/artifacts (`README.md`, this file, relevant `docs/superpowers/` specs) against what the change actually touches: updates anything now stale, or writes a new doc if the change introduces something that doesn't fit an existing doc's purpose. No-op if nothing changed that any doc describes.
    - Opens a PR: `Closes #N`, acceptance criteria restated as a checklist, verification checklist included.
 4. **CI runs** (`.github/workflows/ci.yml`): lint, typecheck, build, bundle-size budget, internal-link check (all blocking), plus Lighthouse CI (currently non-blocking — see below).
 5. **You review and merge.** No autonomous merges, ever — branch protection enforces this at the repo level, not just by convention.

@@ -16,7 +16,11 @@ Use this skill when asked to "work on issue #N" or equivalent.
 
    The `npm@10` dry-run exists because CI (`.github/workflows/ci.yml`) runs Node 20, which bundles a different npm major version than a typical local dev machine (this repo has been developed against npm 11.x locally). Two prior PRs shipped a lockfile that passed local `npm ci` but failed identically both times in CI with the same error, for an optional, cpu-filtered transitive dependency (see issue #12). The npm-version difference is the leading hypothesis — reproduced directly (the exact failing lockfile passed local `npm ci` and failed the real CI run) — but OS (Windows vs. Linux) was never tested in isolation from npm version, so treat it as a strong, evidence-backed hypothesis, not a certainty. Running the dry-run under npm 10 locally is a cheap, effective gate regardless of which variable is the true cause. Skip it for changes that don't touch `package.json`/`package-lock.json` — it's not needed and adds ~10-20s for no benefit on unrelated changes.
 5. **Independent review gate.** Dispatch a fresh subagent (not a fork — no shared context with this session) with the `code-review` skill, giving it only: the diff (`git diff main...HEAD`), the issue's acceptance criteria, and access to the codebase. It must not be told what reasoning produced the changes. If it reports correctness findings, fix them and re-run this step before proceeding.
-6. **Open the PR.** `gh pr create --title "<summary> (#<N>)" --body "<body>"` where the body is:
+6. **Docs & artifacts check.** Look at what the change actually touches (new/renamed routes, changed stack or scripts, changed workflow steps, changed content structure) and compare against `README.md`, `docs/WORKFLOW.md`, and any spec/plan doc under `docs/superpowers/` that describes the area being changed:
+   - If an existing doc now describes something inaccurately, update it in this PR — don't leave known drift for a future pass.
+   - If the change introduces something that needs documentation but doesn't fit any existing doc's purpose (e.g. a new subsystem, a new workflow), write a new doc rather than overloading an unrelated one.
+   - If nothing changed that any doc describes, no action needed — don't manufacture doc edits for their own sake.
+7. **Open the PR.** `gh pr create --title "<summary> (#<N>)" --body "<body>"` where the body is:
 
    ```
    Closes #<N>
@@ -31,12 +35,14 @@ Use this skill when asked to "work on issue #N" or equivalent.
    - [x] npm run typecheck
    - [x] npm run build
    - [x] Independent code-review pass (see above)
+   - [x] Docs/artifacts checked for staleness against this change (see above)
    ```
 
-7. **Report back** the PR URL and a one-line summary. Do not merge — merging is the user's call.
+8. **Report back** the PR URL and a one-line summary. Do not merge — merging is the user's call.
 
 ## Guardrails
 
 - Never push directly to `main`.
 - Never skip the independent review gate, even for small changes.
+- Never skip the docs & artifacts check, even when the answer is "nothing to update."
 - If the acceptance criteria turn out to be wrong or incomplete once you're implementing, stop and ask the user rather than silently expanding or shrinking scope.

@@ -14,3 +14,4 @@ Closes #
 - [ ] `npm run typecheck` passes
 - [ ] `npm run build` passes
 - [ ] Independent code-review pass completed (fresh subagent, per `docs/WORKFLOW.md`)
+- [ ] Docs/artifacts (README, `docs/WORKFLOW.md`, relevant specs) checked for staleness against this change — updated, or a new doc added, if needed
