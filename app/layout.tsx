@@ -4,6 +4,7 @@ import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Nav } from '@/components/nav'
 import { Footer } from '@/components/footer'
+import { Analytics } from '@vercel/analytics/react'
 
 export const metadata: Metadata = {
   title: {
@@ -11,6 +12,18 @@ export const metadata: Metadata = {
     template: '%s | Akshay Malhotra',
   },
   description: 'Senior software engineer building reliable distributed systems.',
+}
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Akshay Malhotra',
+  url: 'https://akshaymalhotra.dev',
+  jobTitle: 'Senior Software Engineer',
+  sameAs: [
+    'https://github.com/akshaymal',
+    'https://linkedin.com/in/akshaymal',
+  ],
 }
 
 export default function RootLayout({
@@ -21,6 +34,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${sourceSerif.variable} font-sans`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex min-h-screen flex-col">
             <Nav />
@@ -28,6 +45,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )
