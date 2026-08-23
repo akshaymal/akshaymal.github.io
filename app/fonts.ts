@@ -1,15 +1,17 @@
-import { Source_Serif_4, Inter } from 'next/font/google'
+import localFont from 'next/font/local'
 
-export const sourceSerif = Source_Serif_4({
-  weight: ['400', '600', '700'],
-  subsets: ['latin'],
+export const sourceSerif = localFont({
+  src: '../node_modules/@fontsource-variable/source-serif-4/files/source-serif-4-latin-wght-normal.woff2',
+  weight: '200 900',
+  style: 'normal',
   display: 'swap',
   variable: '--font-serif',
 })
 
-export const inter = Inter({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
+export const inter = localFont({
+  src: '../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2',
+  weight: '100 900',
+  style: 'normal',
   display: 'swap',
   variable: '--font-sans',
 })
