@@ -57,8 +57,13 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
     if (!container || !panel) return
 
     lockedRef.current = true
+    // Each panel is h-full (one container-height tall), so its offset within
+    // the container's own scroll coordinate space is a simple multiple of the
+    // container height. `panel.offsetTop` is relative to `offsetParent`
+    // (the document, since nothing here is CSS-positioned) rather than the
+    // scroll container, so it can't be used directly here.
     container.scrollTo({
-      top: panel.offsetTop,
+      top: index * container.clientHeight,
       behavior: reducedMotionRef.current ? 'auto' : 'smooth',
     })
     setActiveIndex(index)
@@ -156,6 +161,7 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
             type="button"
             onClick={() => goToIndex(i)}
             aria-current={activeIndex === i ? 'true' : undefined}
+            aria-label={`${entry.company}, ${entry.startDate.slice(0, 4)}`}
             className={cn(
               'rounded-md px-2 py-2 text-sm font-medium tabular-nums transition-colors hover:text-primary',
               activeIndex === i ? 'text-primary font-semibold' : 'text-muted-foreground'
