@@ -42,7 +42,7 @@ Every issue gets exactly one Type, one Priority, one Area label.
    - Verifies `agent-ready` is set (refuses to proceed otherwise).
    - Branches as `issue-<N>-<short-slug>` off up-to-date `main`.
    - Implements against the acceptance criteria, following `CLAUDE.md`.
-   - Self-verifies: lint, typecheck, build.
+   - Self-verifies: lint, typecheck, build, plus an `npm@10`-pinned `npm ci --dry-run` when `package.json`/`package-lock.json` changed (catches npm-version-dependent lockfile drift before it reaches CI — see [#12](https://github.com/akshaymal/akshaymalhotra.dev/issues/12)).
    - Dispatches a **fresh, context-free subagent** to run the `code-review` skill against the diff — independent scrutiny with no exposure to the implementation reasoning.
    - Opens a PR: `Closes #N`, acceptance criteria restated as a checklist, verification checklist included.
 4. **CI runs** (`.github/workflows/ci.yml`): lint, typecheck, build, bundle-size budget, internal-link check (all blocking), plus Lighthouse CI (currently non-blocking — see below).
