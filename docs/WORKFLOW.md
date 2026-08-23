@@ -65,5 +65,4 @@ Filed as GitHub issues, all currently `agent-ready` (ready to pick up, not in pr
 - [#5](https://github.com/akshaymal/akshaymalhotra.dev/issues/5) — Real contact form (replacing `mailto:`)
 - [#6](https://github.com/akshaymal/akshaymalhotra.dev/issues/6) — Blog (MDX/CMS-backed)
 - [#7](https://github.com/akshaymal/akshaymalhotra.dev/issues/7) — Lighthouse CI promotion to blocking
-- [#18](https://github.com/akshaymal/akshaymalhotra.dev/issues/18) — Vendor fonts locally instead of fetching from Google Fonts at build time
 - [#19](https://github.com/akshaymal/akshaymalhotra.dev/issues/19) — Experience page: logo/name/years column + redesigned year index
