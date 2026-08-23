@@ -1,111 +1,56 @@
-# Akshay Malhotra - Personal Portfolio
+# akshaymalhotra.dev
 
-A modern, minimalist personal portfolio website showcasing my professional identity with a clean design and custom branding.
+Personal portfolio for Akshay Malhotra — senior software engineer. Fast, professional, direct, lightweight.
 
-## About
+## Stack
 
-This is my personal website hosted on Vercel, featuring a welcoming landing page with my custom AM monogram logo and a warm, inviting color palette.
+- **Next.js 14** (App Router) + **React 18** + **TypeScript**
+- **Tailwind CSS** + **shadcn/ui** (Radix primitives under `components/ui/`)
+- Fonts: Inter (sans) and Source Serif 4, via `next/font/google`
+- Deployed on **Vercel**, with Vercel Analytics
 
-## Features
-
-- Custom AM monogram logo with transparent background
-- Responsive design that works seamlessly on mobile and desktop
-- Custom Google Fonts integration (Almarai and Alex Brush)
-- Warm color palette featuring teal, cream, gold, burgundy, and maroon
-- Optimized static site generation for fast loading
-- Type-safe development with TypeScript
-
-## Technologies Used
-
-### Core Framework
-- **Next.js 14.2.18** - React framework with App Router
-- **React 18.3.1** - UI library
-- **TypeScript 5.0** - Type-safe JavaScript
-
-### Styling
-- **Tailwind CSS 3.4** - Utility-first CSS framework
-- **PostCSS 8.4** - CSS transformations
-- **Autoprefixer 10.4** - Automatic vendor prefixing
-- **Google Fonts** - Custom typography (Almarai & Alex Brush)
-
-### Development Tools
-- **ESLint** - Code linting
-- **Next.js Image Optimization** - Automatic image optimization
-
-## Project Structure
+## Project structure
 
 ```
 .
-├── app/
-│   ├── fonts.ts          # Google Fonts configuration
-│   ├── globals.css       # Global styles and Tailwind directives
-│   ├── layout.tsx        # Root layout with metadata
-│   └── page.tsx          # Home page component
-├── public/
-│   └── assets/
-│       └── logo.png      # AM monogram logo (transparent)
-├── tailwind.config.ts    # Tailwind configuration with custom colors
-└── next.config.js        # Next.js configuration
+├── app/                  # Routes (App Router) — one page.tsx per route, thin
+│   ├── page.tsx              # Home
+│   ├── experience/page.tsx
+│   ├── projects/page.tsx
+│   ├── beyond-work/page.tsx
+│   ├── layout.tsx            # Root layout, metadata, JSON-LD
+│   ├── fonts.ts
+│   ├── globals.css
+│   └── sitemap.ts
+├── components/           # Shared UI
+│   └── ui/                   # shadcn/ui primitives
+├── content/              # Structured content (projects, experience) — edited independently of components
+├── lib/                  # Small shared utilities
+├── hooks/                # Custom React hooks
+├── public/assets/        # Static assets
+├── scripts/               # CI/tooling scripts (bundle size, link check, git hooks, label setup)
+├── docs/                 # Workflow reference and design specs/plans
+└── .claude/              # Claude Code skills and agents used to develop this repo
 ```
 
-## Color Palette
-
-- **Teal** (#335C67) - Primary accent
-- **Cream** (#FFF3B0) - Background
-- **Gold** (#E09F3E) - Highlight
-- **Burgundy** (#9E2A2B) - Secondary accent
-- **Maroon** (#540B0E) - Deep accent
-
-## Getting Started
-
-### Prerequisites
-- Node.js 20.x or higher
-- npm or yarn
-
-### Installation
+## Commands
 
 ```bash
-# Clone the repository
-git clone https://github.com/akshaymal/akshaymalhotra.dev.git
-
-# Navigate to the project directory
-cd akshaymalhotra.dev
-
-# Install dependencies
-npm install
+npm run dev          # local dev server
+npm run build         # production build
+npm start             # start production server
+npm run lint           # ESLint
+npm run typecheck       # tsc --noEmit
 ```
 
-### Development
+## Development workflow
 
-```bash
-# Run the development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view the site in your browser.
-
-### Build
-
-```bash
-# Create an optimized production build
-npm run build
-
-# Start the production server
-npm start
-```
+Work is tracked as GitHub Issues and implemented via Claude Code skills (`issue-refiner`, `work-issue`). All changes land via PR — CI runs lint, typecheck, build, bundle-size budget, and internal-link checks. See `CLAUDE.md` for the summary and `docs/WORKFLOW.md` for the full reference.
 
 ## Deployment
 
-This site is deployed on Vercel and automatically builds and deploys when changes are pushed to the main branch. Vercel provides:
-- Automatic deployments on git push
-- Preview deployments for pull requests
-- Edge network for fast global delivery
-- Built-in CI/CD pipeline
+Deployed on Vercel with automatic deployments on push to `main` and preview deployments for pull requests.
 
 ## License
 
 This project is private and proprietary.
-
----
-
-Built with Next.js, React, and Tailwind CSS
