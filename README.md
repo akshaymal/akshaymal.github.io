@@ -12,7 +12,7 @@ Personal portfolio for Akshay Malhotra — senior software engineer. Fast, profe
 - Small styling utilities: `clsx` + `tailwind-merge` (combined into the `cn()` helper in `lib/utils.ts`), `class-variance-authority` (variant-based component styling, used by `components/ui/*`), `tailwindcss-animate`.
 - **@vercel/analytics** for pageview analytics.
 - Fonts: Inter (sans) and Source Serif 4 (serif), self-hosted via `next/font/local` in `app/fonts.ts`, sourced from the `@fontsource-variable/inter` / `@fontsource-variable/source-serif-4` npm packages — no build-time network dependency on Google Fonts.
-- Tooling: ESLint (`eslint-config-next`), `tsc --noEmit` for type checking, **Playwright** (`@playwright/test`) for a viewport-overflow smoke test (`e2e/`), **Lighthouse CI** (`@lhci/cli`) for performance/accessibility/SEO audits (currently non-blocking in CI — no assertions configured yet).
+- Tooling: ESLint (`eslint-config-next`), `tsc --noEmit` for type checking, **Playwright** (`@playwright/test`) for a viewport-overflow smoke test (`e2e/`), **Lighthouse CI** (`@lhci/cli`) for performance/accessibility/best-practices/SEO audits across every route, each category gated at a minimum score of 0.90.
 - No CMS/blog yet — content is authored directly in TypeScript (see `content/` below). No dedicated state-management library; the site has no client state beyond theme and current route.
 - Deployed on **Vercel**, which builds the static export and serves it from its edge network. Every push to `main` deploys to production; every PR gets a preview deployment (see the Vercel bot comment on PRs).
 
@@ -98,7 +98,7 @@ This is tooling *for developing the site*, not something the site itself depends
 
 ### `.github/` — CI and repo templates
 
-- `workflows/ci.yml` — on every PR and push to `main`: `verify` job runs lint, typecheck, build, the bundle-size check, and the internal-link check; a `viewport` job runs the Playwright viewport-overflow smoke test (all three jobs blocking); a separate `lighthouse` job runs Lighthouse CI (currently non-blocking).
+- `workflows/ci.yml` — on every PR and push to `main`: `verify` job runs lint, typecheck, build, the bundle-size check, and the internal-link check; a `viewport` job runs the Playwright viewport-overflow smoke test; a `lighthouse` job runs Lighthouse CI across all 4 routes (all jobs blocking).
 - `ISSUE_TEMPLATE/task.yml`, `PULL_REQUEST_TEMPLATE.md` — structure for filed issues and opened PRs.
 
 ### Root config files

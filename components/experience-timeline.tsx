@@ -23,24 +23,6 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
   const lockedRef = useRef(false)
   const reducedMotionRef = useRef(false)
 
-  // Size the panel container to the viewport minus the (possibly wrapped) nav height,
-  // so the first panel is fully visible without an extra scroll, and the footer
-  // remains reachable by continuing to scroll past the last panel.
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    function updateHeight() {
-      const nav = document.querySelector('header')
-      const navHeight = nav?.getBoundingClientRect().height ?? 0
-      container!.style.height = `calc(100dvh - ${navHeight}px)`
-    }
-
-    updateHeight()
-    window.addEventListener('resize', updateHeight)
-    return () => window.removeEventListener('resize', updateHeight)
-  }, [])
-
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)')
     reducedMotionRef.current = query.matches
@@ -150,7 +132,7 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
   }
 
   return (
-    <div className="flex">
+    <div className="flex h-full">
       <nav
         aria-label="Experience timeline navigation"
         className="flex w-14 flex-none flex-col items-center gap-1 border-r border-border py-6 sm:w-20"
