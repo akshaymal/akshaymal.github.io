@@ -1,4 +1,4 @@
-import { alexBrush } from './fonts'
+import { sourceSerif } from './fonts'
 import Image from 'next/image'
 
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
         <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
           <span className="text-maroon block mb-4">Hello, World!</span>
           <span className="text-teal block mb-4">This is</span>
-          <span className={`${alexBrush.className} text-burgundy block text-7xl md:text-9xl my-8`}>
+          <span className={`${sourceSerif.className} text-burgundy block text-7xl md:text-9xl my-8`}>
             Akshay Malhotra
           </span>
           <span className="text-gold block mt-4">, for the 2nd time!</span>
