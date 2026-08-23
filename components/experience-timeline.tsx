@@ -1,0 +1,207 @@
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { cn } from '@/lib/utils'
+import type { ExperienceEntry } from '@/content/experience'
+
+const TRANSITION_MS = 600
+
+function formatDate(date: string | null): string {
+  if (date === null) return 'Present'
+  const [year, month] = date.split('-')
+  const monthNames = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ]
+  return `${monthNames[Number(month) - 1]} ${year}`
+}
+
+export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const panelRefs = useRef<(HTMLElement | null)[]>([])
+  const [activeIndex, setActiveIndex] = useState(0)
+  const lockedRef = useRef(false)
+  const reducedMotionRef = useRef(false)
+
+  // Size the panel container to the viewport minus the (possibly wrapped) nav height,
+  // so the first panel is fully visible without an extra scroll, and the footer
+  // remains reachable by continuing to scroll past the last panel.
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    function updateHeight() {
+      const nav = document.querySelector('header')
+      const navHeight = nav?.getBoundingClientRect().height ?? 0
+      container!.style.height = `calc(100dvh - ${navHeight}px)`
+    }
+
+    updateHeight()
+    window.addEventListener('resize', updateHeight)
+    return () => window.removeEventListener('resize', updateHeight)
+  }, [])
+
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+    reducedMotionRef.current = query.matches
+    const listener = (e: MediaQueryListEvent) => {
+      reducedMotionRef.current = e.matches
+    }
+    query.addEventListener('change', listener)
+    return () => query.removeEventListener('change', listener)
+  }, [])
+
+  const goToIndex = useCallback((index: number) => {
+    const container = containerRef.current
+    const panel = panelRefs.current[index]
+    if (!container || !panel) return
+
+    lockedRef.current = true
+    container.scrollTo({
+      top: panel.offsetTop,
+      behavior: reducedMotionRef.current ? 'auto' : 'smooth',
+    })
+    setActiveIndex(index)
+    window.setTimeout(() => {
+      lockedRef.current = false
+    }, reducedMotionRef.current ? 0 : TRANSITION_MS)
+  }, [])
+
+  // Desktop wheel interception: one gesture -> one panel, single smooth transition,
+  // no native scroll-then-corrective-snap double motion. Touch swipe on mobile is
+  // left alone entirely and falls back to native CSS scroll-snap.
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    function handleWheel(e: WheelEvent) {
+      if (lockedRef.current) {
+        e.preventDefault()
+        return
+      }
+
+      const direction = e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0
+      if (direction === 0) return
+
+      // If the active panel has its own scrollable content (a long highlights
+      // list) that hasn't reached its edge yet, let that scroll natively
+      // instead of advancing to the next/previous panel.
+      const activePanel = panelRefs.current[activeIndex]
+      const scrollable = activePanel?.querySelector<HTMLElement>('[data-scroll-region]')
+      if (scrollable && scrollable.scrollHeight > scrollable.clientHeight) {
+        const atTop = scrollable.scrollTop <= 0
+        const atBottom = scrollable.scrollTop + scrollable.clientHeight >= scrollable.scrollHeight - 1
+        if ((direction === 1 && !atBottom) || (direction === -1 && !atTop)) {
+          return
+        }
+      }
+
+      const nextIndex = activeIndex + direction
+      if (nextIndex < 0 || nextIndex >= entries.length) {
+        // At the first/last panel: don't intercept, so the gesture chains to
+        // the surrounding page scroll (e.g. reaching the footer).
+        return
+      }
+
+      e.preventDefault()
+      goToIndex(nextIndex)
+    }
+
+    container.addEventListener('wheel', handleWheel, { passive: false })
+    return () => container.removeEventListener('wheel', handleWheel)
+  }, [activeIndex, entries.length, goToIndex])
+
+  // Tracks the active panel for both the JS-driven desktop path and native
+  // touch-swipe scrolling on mobile, so the year index stays in sync either way.
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const observer = new IntersectionObserver(
+      (observerEntries) => {
+        for (const entry of observerEntries) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+            const index = panelRefs.current.findIndex((panel) => panel === entry.target)
+            if (index !== -1) setActiveIndex(index)
+          }
+        }
+      },
+      { root: container, threshold: [0.6] }
+    )
+
+    panelRefs.current.forEach((panel) => panel && observer.observe(panel))
+    return () => observer.disconnect()
+  }, [entries.length])
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (lockedRef.current) return
+    if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+      e.preventDefault()
+      goToIndex(Math.min(activeIndex + 1, entries.length - 1))
+    } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault()
+      goToIndex(Math.max(activeIndex - 1, 0))
+    }
+  }
+
+  return (
+    <div className="flex">
+      <nav
+        aria-label="Experience timeline navigation"
+        className="flex w-14 flex-none flex-col items-center gap-1 border-r border-border py-6 sm:w-20"
+      >
+        {entries.map((entry, i) => (
+          <button
+            key={entry.slug}
+            type="button"
+            onClick={() => goToIndex(i)}
+            aria-current={activeIndex === i ? 'true' : undefined}
+            className={cn(
+              'rounded-md px-2 py-2 text-sm font-medium tabular-nums transition-colors hover:text-primary',
+              activeIndex === i ? 'text-primary font-semibold' : 'text-muted-foreground'
+            )}
+          >
+            {entry.startDate.slice(0, 4)}
+          </button>
+        ))}
+      </nav>
+
+      <div
+        ref={containerRef}
+        tabIndex={0}
+        role="region"
+        aria-label="Experience timeline"
+        onKeyDown={handleKeyDown}
+        className="flex-1 snap-y snap-mandatory overflow-y-scroll motion-reduce:scroll-auto motion-reduce:snap-none"
+      >
+        {entries.map((entry, i) => (
+          <section
+            key={entry.slug}
+            ref={(el) => {
+              panelRefs.current[i] = el
+            }}
+            aria-label={`${entry.title} at ${entry.company}`}
+            className="flex h-full snap-start items-center justify-center px-6"
+          >
+            <div data-scroll-region className="max-h-full w-full max-w-2xl overflow-y-auto py-12">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h2 className="font-serif text-2xl font-semibold">
+                  {entry.title} · {entry.company}
+                </h2>
+                <span className="text-sm text-muted-foreground">
+                  {formatDate(entry.startDate)} – {formatDate(entry.endDate)}
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">{entry.summary}</p>
+              <ul className="mt-6 list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                {entry.highlights.map((highlight, j) => (
+                  <li key={j}>{highlight}</li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  )
+}
