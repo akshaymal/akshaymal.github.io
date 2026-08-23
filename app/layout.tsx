@@ -1,12 +1,16 @@
 import type { Metadata } from 'next'
-import { inter } from './fonts'
+import { inter, sourceSerif } from './fonts'
 import './globals.css'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/app-sidebar'
+import { ThemeProvider } from '@/components/theme-provider'
+import { Nav } from '@/components/nav'
+import { Footer } from '@/components/footer'
 
 export const metadata: Metadata = {
-  title: 'Akshay Malhotra',
-  description: 'Personal page of Akshay Malhotra',
+  title: {
+    default: 'Akshay Malhotra',
+    template: '%s | Akshay Malhotra',
+  },
+  description: 'Senior software engineer building reliable distributed systems.',
 }
 
 export default function RootLayout({
@@ -15,15 +19,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="w-full">
-            <SidebarTrigger />
-            {children}
-          </main>
-        </SidebarProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${sourceSerif.variable} font-sans`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <div className="flex min-h-screen flex-col">
+            <Nav />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   )
