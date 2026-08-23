@@ -22,7 +22,8 @@ Use this skill when asked to "work on issue #N" or equivalent.
    - If an existing doc now describes something inaccurately, update it in this PR — don't leave known drift for a future pass.
    - If the change introduces something that needs documentation but doesn't fit any existing doc's purpose (e.g. a new subsystem, a new workflow), write a new doc rather than overloading an unrelated one.
    - If nothing changed that any doc describes, no action needed — don't manufacture doc edits for their own sake.
-7. **Open the PR.** `gh pr create --title "<summary> (#<N>)" --body "<body>"` where the body is:
+7. **Sync with base before opening the PR.** Implementation (plus review rounds, plus any back-and-forth on a tricky fix) can take long enough that `main` moves — a same-session PR going stale isn't a fluke, it's expected on anything nontrivial. Run `git fetch origin main`. If `origin/main` has commits the branch doesn't (`git log <branch>..origin/main`), merge it in: `git merge origin/main` (never rebase or force-push — this may not be the only place work is happening, and a merge commit can't destroy anything). Resolve any conflicts. Re-run the self-verify commands from step 4 against the merged result — a clean merge can still combine into something that no longer builds or passes lint/typecheck, and the merged-in commits weren't covered by this issue's own review round. Push, *then* open the PR. Skip this step only if `git log <branch>..origin/main` is empty.
+8. **Open the PR.** `gh pr create --title "<summary> (#<N>)" --body "<body>"` where the body is:
 
    ```
    Closes #<N>
@@ -40,11 +41,12 @@ Use this skill when asked to "work on issue #N" or equivalent.
    - [x] Docs/artifacts checked for staleness against this change (see above)
    ```
 
-8. **Report back** the PR URL and a one-line summary. Do not merge — merging is the user's call.
+9. **Report back** the PR URL and a one-line summary. Do not merge — merging is the user's call.
 
 ## Guardrails
 
 - Never push directly to `main`.
 - Never skip the independent review gate, even for small changes.
 - Never skip the docs & artifacts check, even when the answer is "nothing to update."
+- Never open a PR without first checking the branch is current with `origin/main` (step 7) — a PR opened against a stale base is a preventable, not occasional, failure mode.
 - If the acceptance criteria turn out to be wrong or incomplete once you're implementing, stop and ask the user rather than silently expanding or shrinking scope.
