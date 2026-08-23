@@ -11,7 +11,7 @@ Personal portfolio for Akshay Malhotra — senior software engineer. Fast, profe
 - **lucide-react** for icons.
 - Small styling utilities: `clsx` + `tailwind-merge` (combined into the `cn()` helper in `lib/utils.ts`), `class-variance-authority` (variant-based component styling, used by `components/ui/*`), `tailwindcss-animate`.
 - **@vercel/analytics** for pageview analytics.
-- Fonts: Inter (sans) and Source Serif 4 (serif), loaded via `next/font/google` in `app/fonts.ts`.
+- Fonts: Inter (sans) and Source Serif 4 (serif), self-hosted via `next/font/local` in `app/fonts.ts`, sourced from the `@fontsource-variable/inter` / `@fontsource-variable/source-serif-4` npm packages — no build-time network dependency on Google Fonts.
 - Tooling: ESLint (`eslint-config-next`), `tsc --noEmit` for type checking, **Playwright** (`@playwright/test`) for a viewport-overflow smoke test (`e2e/`), **Lighthouse CI** (`@lhci/cli`) for performance/accessibility/SEO audits (currently non-blocking in CI — no assertions configured yet).
 - No CMS/blog yet — content is authored directly in TypeScript (see `content/` below). No dedicated state-management library; the site has no client state beyond theme and current route.
 - Deployed on **Vercel**, which builds the static export and serves it from its edge network. Every push to `main` deploys to production; every PR gets a preview deployment (see the Vercel bot comment on PRs).
@@ -45,7 +45,7 @@ Each subfolder is a route, following App Router conventions (a folder's `page.ts
 | `app/projects/page.tsx` | `/projects` | Renders `content/projects.ts` |
 | `app/beyond-work/page.tsx` | `/beyond-work` | Non-work interests |
 | `app/layout.tsx` | — | Root layout: fonts, `ThemeProvider`, `Nav`/`Footer` chrome, `Person` JSON-LD, `Analytics` |
-| `app/fonts.ts` | — | `next/font/google` config (Inter, Source Serif 4) |
+| `app/fonts.ts` | — | `next/font/local` config, self-hosted (Inter, Source Serif 4) |
 | `app/globals.css` | — | Tailwind directives + light/dark CSS variable theme tokens |
 | `app/sitemap.ts` | `/sitemap.xml` | Generates the sitemap from the route list |
 
