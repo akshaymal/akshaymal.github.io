@@ -46,7 +46,7 @@ Every issue gets exactly one Type, one Priority, one Area label.
    - Dispatches a **fresh, context-free subagent** to run the `code-review` skill against the diff — independent scrutiny with no exposure to the implementation reasoning.
    - Checks docs/artifacts (`README.md`, this file, relevant `docs/superpowers/` specs) against what the change actually touches: updates anything now stale, or writes a new doc if the change introduces something that doesn't fit an existing doc's purpose. No-op if nothing changed that any doc describes.
    - Opens a PR: `Closes #N`, acceptance criteria restated as a checklist, verification checklist included.
-4. **CI runs** (`.github/workflows/ci.yml`): lint, typecheck, build, bundle-size budget, internal-link check, and a Playwright viewport-overflow check across every route at four widths (all blocking), plus Lighthouse CI (currently non-blocking — see below).
+4. **CI runs** (`.github/workflows/ci.yml`): lint, typecheck, build, bundle-size budget, internal-link check, a Playwright viewport-overflow check across every route at four widths, and Lighthouse CI across all 4 routes (all blocking — see below).
 5. **You review and merge.** No autonomous merges, ever — branch protection enforces this at the repo level, not just by convention.
 
 ## Viewport verification
@@ -55,7 +55,7 @@ Every issue gets exactly one Type, one Priority, one Area label.
 
 ## Lighthouse CI status
 
-Currently **non-blocking** (`.lighthouserc.json` has no assertions configured) because there's no real content yet to score meaningfully against a budget. Tracked as [#7](https://github.com/akshaymal/akshaymalhotra.dev/issues/7).
+**Blocking.** `.lighthouserc.json` audits all 4 routes (`/`, `/experience`, `/projects`, `/beyond-work`) and asserts Performance/Accessibility/Best Practices/SEO each score ≥ 0.90 on every one. The `lighthouse` CI job has no `continue-on-error`. See [#7](https://github.com/akshaymal/akshaymalhotra.dev/issues/7) — that issue also fixed a real Performance regression on `/experience` (a client-computed container height was applied after first paint, causing a 0.554 Cumulative Layout Shift). Pure-CSS fixes (flexbox, then Grid) were tried and reverted — both need the shared page wrapper to have a genuinely fixed height, which risks breaking the other 3 routes since their content already exceeds one viewport. The shipped fix instead measures the nav's real height via a synchronous inline script, positioned right after the nav in the static HTML, that sets a CSS custom property before the browser's first paint — the same technique `next-themes` already uses in this codebase to avoid a flash of the wrong theme. CLS is now 0.
 
 ## Backlog
 
@@ -64,5 +64,4 @@ Filed as GitHub issues, all currently `agent-ready` (ready to pick up, not in pr
 - [#4](https://github.com/akshaymal/akshaymalhotra.dev/issues/4) — Logo/mark design
 - [#5](https://github.com/akshaymal/akshaymalhotra.dev/issues/5) — Real contact form (replacing `mailto:`)
 - [#6](https://github.com/akshaymal/akshaymalhotra.dev/issues/6) — Blog (MDX/CMS-backed)
-- [#7](https://github.com/akshaymal/akshaymalhotra.dev/issues/7) — Lighthouse CI promotion to blocking
 - [#19](https://github.com/akshaymal/akshaymalhotra.dev/issues/19) — Experience page: logo/name/years column + redesigned year index

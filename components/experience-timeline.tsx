@@ -23,22 +23,19 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
   const lockedRef = useRef(false)
   const reducedMotionRef = useRef(false)
 
-  // Size the panel container to the viewport minus the (possibly wrapped) nav height,
-  // so the first panel is fully visible without an extra scroll, and the footer
-  // remains reachable by continuing to scroll past the last panel.
+  // Keep the --experience-nav-h custom property current when the window is
+  // resized (e.g. the nav wrapping to a second line). The initial value is
+  // set synchronously by the inline script below, before first paint, so
+  // this effect never causes a visible correction on load — only on an
+  // actual live resize, which Lighthouse's CLS audit doesn't measure.
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    function updateHeight() {
-      const nav = document.querySelector('header')
-      const navHeight = nav?.getBoundingClientRect().height ?? 0
-      container!.style.height = `calc(100dvh - ${navHeight}px)`
+    function updateNavHeight() {
+      const header = document.querySelector('header')
+      const height = header?.getBoundingClientRect().height ?? 65
+      document.documentElement.style.setProperty('--experience-nav-h', `${height}px`)
     }
-
-    updateHeight()
-    window.addEventListener('resize', updateHeight)
-    return () => window.removeEventListener('resize', updateHeight)
+    window.addEventListener('resize', updateNavHeight)
+    return () => window.removeEventListener('resize', updateNavHeight)
   }, [])
 
   useEffect(() => {
@@ -151,6 +148,20 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
 
   return (
     <div className="flex">
+      {/*
+        Sets --experience-nav-h to the nav's real rendered height before the
+        browser's first paint, so the container below never needs a client-side
+        correction after load (which would show up as layout shift). Same
+        technique next-themes (wired in via components/theme-provider.tsx)
+        relies on internally to avoid a flash of the wrong theme: a
+        synchronous script, positioned after the element it measures, blocks
+        rendering until it has run.
+      */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){var h=document.querySelector('header');var height=h?h.getBoundingClientRect().height:65;document.documentElement.style.setProperty('--experience-nav-h',height+'px')})()`,
+        }}
+      />
       <nav
         aria-label="Experience timeline navigation"
         className="flex w-14 flex-none flex-col items-center gap-1 border-r border-border py-6 sm:w-20"
@@ -178,6 +189,7 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
         role="region"
         aria-label="Experience timeline"
         onKeyDown={handleKeyDown}
+        style={{ height: 'calc(100dvh - var(--experience-nav-h, 65px))' }}
         className="flex-1 snap-y snap-mandatory overflow-y-scroll motion-reduce:scroll-auto motion-reduce:snap-none"
       >
         {entries.map((entry, i) => (
