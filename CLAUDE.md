@@ -14,6 +14,7 @@ Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui, deployed on Vercel
 - `npm run typecheck` — `tsc --noEmit`
 - `node scripts/check-bundle-size.mjs` — bundle size budget check (run after `npm run build`)
 - `node scripts/check-internal-links.mjs` — broken internal link check
+- `npm run test:viewport` — Playwright viewport-overflow check across every route (run after `npm run build`)
 
 ## One-time local setup
 
@@ -27,7 +28,7 @@ All planned work — features, content, chores, bugs — is tracked as a GitHub 
 1. Issues get filed at any level of roughness.
 2. The `issue-refiner` skill turns a rough issue into `agent-ready` (unambiguous acceptance criteria, one Type/Priority/Area label each).
 3. Say "work on issue #N" to start — the `work-issue` skill branches, implements, self-verifies, gets an independent code-review pass, and opens a PR.
-4. **Never push directly to `main`.** All changes land via PR, and CI (lint, typecheck, build, bundle-size, link-check, Lighthouse) must pass.
+4. **Never push directly to `main`.** All changes land via PR, and CI (lint, typecheck, build, bundle-size, link-check, viewport-overflow check, Lighthouse) must pass.
 
 ## Content skills
 

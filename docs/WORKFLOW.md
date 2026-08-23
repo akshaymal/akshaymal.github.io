@@ -42,12 +42,16 @@ Every issue gets exactly one Type, one Priority, one Area label.
    - Verifies `agent-ready` is set (refuses to proceed otherwise).
    - Branches as `issue-<N>-<short-slug>` off up-to-date `main`.
    - Implements against the acceptance criteria, following `CLAUDE.md`.
-   - Self-verifies: lint, typecheck, build, plus an `npm@10`-pinned `npm ci --dry-run` when `package.json`/`package-lock.json` changed (catches npm-version-dependent lockfile drift before it reaches CI — see [#12](https://github.com/akshaymal/akshaymalhotra.dev/issues/12)).
+   - Self-verifies: lint, typecheck, build, a Playwright viewport-overflow check across every route at four widths (catches layout bugs invisible to text-based content checks — see [#13](https://github.com/akshaymal/akshaymalhotra.dev/issues/13)), plus an `npm@10`-pinned `npm ci --dry-run` when `package.json`/`package-lock.json` changed (catches npm-version-dependent lockfile drift before it reaches CI — see [#12](https://github.com/akshaymal/akshaymalhotra.dev/issues/12)).
    - Dispatches a **fresh, context-free subagent** to run the `code-review` skill against the diff — independent scrutiny with no exposure to the implementation reasoning.
    - Checks docs/artifacts (`README.md`, this file, relevant `docs/superpowers/` specs) against what the change actually touches: updates anything now stale, or writes a new doc if the change introduces something that doesn't fit an existing doc's purpose. No-op if nothing changed that any doc describes.
    - Opens a PR: `Closes #N`, acceptance criteria restated as a checklist, verification checklist included.
-4. **CI runs** (`.github/workflows/ci.yml`): lint, typecheck, build, bundle-size budget, internal-link check (all blocking), plus Lighthouse CI (currently non-blocking — see below).
+4. **CI runs** (`.github/workflows/ci.yml`): lint, typecheck, build, bundle-size budget, internal-link check, and a Playwright viewport-overflow check across every route at four widths (all blocking), plus Lighthouse CI (currently non-blocking — see below).
 5. **You review and merge.** No autonomous merges, ever — branch protection enforces this at the repo level, not just by convention.
+
+## Viewport verification
+
+`e2e/viewport-overflow.spec.ts` (Playwright) renders every route against the static-exported `out/` output at 375px/393px/768px/1280px and asserts nothing overflows horizontally. Added after a nav overflow bug shipped undetected during the Spec 2 redesign, because nothing in the harness rendered a real viewport — every prior check only inspected the static HTML as text. Runs both in `work-issue`'s self-verify step and as a blocking `viewport` CI job. See [#13](https://github.com/akshaymal/akshaymalhotra.dev/issues/13).
 
 ## Lighthouse CI status
 
@@ -55,9 +59,11 @@ Currently **non-blocking** (`.lighthouserc.json` has no assertions configured) b
 
 ## Backlog
 
-Filed as GitHub issues (none of these are `agent-ready` yet — each needs a pass through `issue-refiner` before pickup):
+Filed as GitHub issues, all currently `agent-ready` (ready to pick up, not in progress):
 
 - [#4](https://github.com/akshaymal/akshaymalhotra.dev/issues/4) — Logo/mark design
 - [#5](https://github.com/akshaymal/akshaymalhotra.dev/issues/5) — Real contact form (replacing `mailto:`)
 - [#6](https://github.com/akshaymal/akshaymalhotra.dev/issues/6) — Blog (MDX/CMS-backed)
 - [#7](https://github.com/akshaymal/akshaymalhotra.dev/issues/7) — Lighthouse CI promotion to blocking
+- [#18](https://github.com/akshaymal/akshaymalhotra.dev/issues/18) — Vendor fonts locally instead of fetching from Google Fonts at build time
+- [#19](https://github.com/akshaymal/akshaymalhotra.dev/issues/19) — Experience page: logo/name/years column + redesigned year index

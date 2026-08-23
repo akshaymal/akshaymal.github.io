@@ -12,8 +12,8 @@ Personal portfolio for Akshay Malhotra — senior software engineer. Fast, profe
 - Small styling utilities: `clsx` + `tailwind-merge` (combined into the `cn()` helper in `lib/utils.ts`), `class-variance-authority` (variant-based component styling, used by `components/ui/*`), `tailwindcss-animate`.
 - **@vercel/analytics** for pageview analytics.
 - Fonts: Inter (sans) and Source Serif 4 (serif), loaded via `next/font/google` in `app/fonts.ts`.
-- Tooling: ESLint (`eslint-config-next`), `tsc --noEmit` for type checking, **Lighthouse CI** (`@lhci/cli`) for performance/accessibility/SEO audits (currently non-blocking in CI — no assertions configured yet).
-- No test framework and no CMS/blog yet — content is authored directly in TypeScript (see `content/` below). No dedicated state-management library; the site has no client state beyond theme and current route.
+- Tooling: ESLint (`eslint-config-next`), `tsc --noEmit` for type checking, **Playwright** (`@playwright/test`) for a viewport-overflow smoke test (`e2e/`), **Lighthouse CI** (`@lhci/cli`) for performance/accessibility/SEO audits (currently non-blocking in CI — no assertions configured yet).
+- No CMS/blog yet — content is authored directly in TypeScript (see `content/` below). No dedicated state-management library; the site has no client state beyond theme and current route.
 - Deployed on **Vercel**, which builds the static export and serves it from its edge network. Every push to `main` deploys to production; every PR gets a preview deployment (see the Vercel bot comment on PRs).
 
 ## Project structure
@@ -27,6 +27,7 @@ Personal portfolio for Akshay Malhotra — senior software engineer. Fast, profe
 ├── lib/                        # Small shared utilities
 ├── hooks/                      # Custom React hooks
 ├── public/assets/              # Static files served as-is
+├── e2e/                        # Playwright viewport smoke test
 ├── scripts/                    # Node/shell tooling run in CI and locally (not part of the app bundle)
 ├── docs/                       # Human-facing docs: process reference and design specs/plans
 ├── .claude/                    # Claude Code skills/agents used to develop this repo
@@ -72,6 +73,10 @@ New entries are typically added via the `add-project` / `add-experience` Claude 
 - `lib/nav-items.ts` — the nav link list; single source of truth consumed by `components/nav.tsx`.
 - `hooks/use-mobile.tsx` — `useIsMobile()`, a media-query hook (shadcn convention), for responsive behavior that CSS alone can't express.
 
+### `e2e/` — viewport smoke test
+
+- `viewport-overflow.spec.ts` — Playwright check that renders every route against the static-exported `out/` output at four widths (375px/393px/768px/1280px) and asserts nothing overflows horizontally. Configured in `playwright.config.ts` (serves `out/` via `serve` on port 4173). Run with `npm run test:viewport` (requires `npm run build` first).
+
 ### `scripts/` — repo tooling, not app code
 
 - `check-bundle-size.mjs` — run after `npm run build`; fails if `.next/static/chunks` exceeds the KB budget in `bundle-budget.json`.
@@ -93,12 +98,12 @@ This is tooling *for developing the site*, not something the site itself depends
 
 ### `.github/` — CI and repo templates
 
-- `workflows/ci.yml` — on every PR and push to `main`: `verify` job runs lint, typecheck, build, the bundle-size check, and the internal-link check (all blocking); a separate `lighthouse` job runs Lighthouse CI (currently non-blocking).
+- `workflows/ci.yml` — on every PR and push to `main`: `verify` job runs lint, typecheck, build, the bundle-size check, and the internal-link check; a `viewport` job runs the Playwright viewport-overflow smoke test (all three jobs blocking); a separate `lighthouse` job runs Lighthouse CI (currently non-blocking).
 - `ISSUE_TEMPLATE/task.yml`, `PULL_REQUEST_TEMPLATE.md` — structure for filed issues and opened PRs.
 
 ### Root config files
 
-`components.json` (shadcn/ui config — style, aliases, Tailwind wiring), `tailwind.config.ts`, `next.config.js` (static export settings), `tsconfig.json`, `postcss.config.js`, `.eslintrc.json`, `.lighthouserc.json`, `bundle-budget.json`.
+`components.json` (shadcn/ui config — style, aliases, Tailwind wiring), `tailwind.config.ts`, `next.config.js` (static export settings), `tsconfig.json`, `postcss.config.js`, `.eslintrc.json`, `.lighthouserc.json`, `bundle-budget.json`, `playwright.config.ts`.
 
 ## Commands
 
@@ -107,13 +112,14 @@ npm run dev          # local dev server
 npm run build         # production build (static export to out/)
 npm run lint            # ESLint
 npm run typecheck        # tsc --noEmit
+npm run test:viewport    # Playwright viewport-overflow check (run after npm run build)
 node scripts/check-bundle-size.mjs      # run after npm run build
 node scripts/check-internal-links.mjs
 ```
 
 ## Development workflow
 
-Work is tracked as GitHub Issues and implemented via Claude Code skills (`issue-refiner`, `work-issue`). All changes land via PR — CI runs lint, typecheck, build, bundle-size budget, and internal-link checks. See `CLAUDE.md` for the summary and `docs/WORKFLOW.md` for the full reference.
+Work is tracked as GitHub Issues and implemented via Claude Code skills (`issue-refiner`, `work-issue`). All changes land via PR — CI runs lint, typecheck, build, bundle-size budget, internal-link, and viewport-overflow checks. See `CLAUDE.md` for the summary and `docs/WORKFLOW.md` for the full reference.
 
 ## Deployment
 
