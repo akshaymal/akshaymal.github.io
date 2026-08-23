@@ -55,7 +55,7 @@ Every issue gets exactly one Type, one Priority, one Area label.
 
 ## Lighthouse CI status
 
-**Blocking.** `.lighthouserc.json` audits all 4 routes (`/`, `/experience`, `/projects`, `/beyond-work`) and asserts Performance/Accessibility/Best Practices/SEO each score ≥ 0.90 on every one. The `lighthouse` CI job has no `continue-on-error`. See [#7](https://github.com/akshaymal/akshaymalhotra.dev/issues/7) — that issue also fixed a real Performance regression on `/experience` (a client-computed container height was applied after first paint, causing a 0.554 Cumulative Layout Shift; replaced with a pure-CSS flex layout, eliminating the shift entirely).
+**Blocking.** `.lighthouserc.json` audits all 4 routes (`/`, `/experience`, `/projects`, `/beyond-work`) and asserts Performance/Accessibility/Best Practices/SEO each score ≥ 0.90 on every one. The `lighthouse` CI job has no `continue-on-error`. See [#7](https://github.com/akshaymal/akshaymalhotra.dev/issues/7) — that issue also fixed a real Performance regression on `/experience` (a client-computed container height was applied after first paint, causing a 0.554 Cumulative Layout Shift). Pure-CSS fixes (flexbox, then Grid) were tried and reverted — both need the shared page wrapper to have a genuinely fixed height, which risks breaking the other 3 routes since their content already exceeds one viewport. The shipped fix instead measures the nav's real height via a synchronous inline script, positioned right after the nav in the static HTML, that sets a CSS custom property before the browser's first paint — the same technique `next-themes` already uses in this codebase to avoid a flash of the wrong theme. CLS is now 0.
 
 ## Backlog
 
