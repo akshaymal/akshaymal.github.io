@@ -39,6 +39,12 @@ Use this skill when asked to "work on issue #N" or equivalent.
 
    Do not tell it what reasoning produced the changes or what you expected the implementation to look like — the value of the gate is the independent read.
 
+   **Model selection:** Default to `claude-haiku-4-5-20251001` — the brief is structured and the mandate is narrow, which is exactly the case where a smaller model performs well at a fraction of the cost. Upgrade to `claude-sonnet-4-6` when the diff touches any of these high-blast-radius areas:
+   - Shared types in `content/` (`projects.ts`, `experience.ts`) — consumed across multiple pages
+   - Layout or nav components (`components/`) — affect every route
+   - CI config (`.github/workflows/`) or harness scripts (`scripts/`) — failures here block all future work
+   - `tailwind.config.ts` or `app/globals.css` — global style tokens, regressions are invisible to typecheck
+
    **Respond to findings by severity, not uniformly:**
    - **Correctness bug** (wrong logic, missed edge case, data loss risk): fix it, then re-run this step — the fix itself might introduce something new.
    - **Nit or low-confidence finding** (rename, minor null-check, stylistic): apply it in place and continue — no re-run needed for changes this small.
