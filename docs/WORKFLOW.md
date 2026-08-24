@@ -37,7 +37,7 @@ Every issue gets exactly one Type, one Priority, one Area label.
 ## Lifecycle
 
 1. **File the issue** using the `task.yml` form (`.github/ISSUE_TEMPLATE/task.yml`), at any level of roughness.
-2. **Refine it**: run the `issue-refiner` skill against the issue number. If the issue already names a specific implementation rather than an outcome, it asks why — the acceptance criteria capture the outcome always, and the mechanism too once it's confirmed as a real constraint rather than a first guess — then it interviews you until Type/Priority/Area/acceptance criteria/DoD are all concrete, checks for overlap with other open issues, and applies `agent-ready`.
+2. **Refine it**: run the `issue-refiner` skill against the issue number. It always grills for the outcome first — what you're trying to accomplish and why — before entertaining any implementation, then walks you through recommended implementation options (including your own idea, if you had one) so you can make an informed choice. Acceptance criteria always cover both the outcome and the chosen implementation. It interviews you until Type/Priority/Area/acceptance criteria/DoD are all concrete, checks for overlap with other open issues, and applies `agent-ready`.
 3. **Work it**: say "work on issue #N". The `work-issue` skill:
    - Verifies `agent-ready` is set (refuses to proceed otherwise).
    - Branches as `issue-<N>-<short-slug>` off up-to-date `main`.
