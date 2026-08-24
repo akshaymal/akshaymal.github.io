@@ -30,6 +30,8 @@ All planned work — features, content, chores, bugs — is tracked as a GitHub 
 3. Say "work on issue #N" to start — the `work-issue` skill branches, implements, self-verifies, gets an independent code-review pass, and opens a PR.
 4. **Never push directly to `main`.** All changes land via PR, and CI (lint, typecheck, build, bundle-size, link-check, viewport-overflow check, Lighthouse) must pass.
 
+**Issue creation rule:** Never create a GitHub issue directly via the API or MCP tools. Always invoke the `issue-refiner` skill instead — it enforces the required Type/Priority/Area labels and acceptance criteria before the issue is filed. The `.github/ISSUE_TEMPLATE/task.yml` form (used by the GitHub web UI) and the `issue-refiner` skill are the only two sanctioned paths for creating issues.
+
 ## Content skills
 
 - `add-project` — new entry in `content/projects.ts`
