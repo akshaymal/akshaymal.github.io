@@ -17,10 +17,13 @@ export function Footer() {
   // The footer is fixed to the viewport bottom, so it no longer reserves its
   // own space in document flow — anything that needs to clear it (the `<main>`
   // padding in app/layout.tsx, the experience timeline's own height calc)
-  // reads this single `--footer-h` custom property instead of hardcoding the
-  // footer's height, so there's exactly one source of truth and no risk of
-  // under- or double-reserving space as the footer's real height changes
-  // (e.g. wrapping to two rows on narrow viewports).
+  // reads this `--footer-h` custom property rather than reserving its own
+  // independent guess, so there's one live source of truth and no risk of
+  // double-reserving space. Those consumers also seed a static fallback that
+  // matches this component's real height at each breakpoint, so first paint
+  // (before this effect runs) doesn't need a client-side layout correction —
+  // this property is what keeps that fallback honest if the footer's height
+  // ever changes.
   useLayoutEffect(() => {
     const footer = footerRef.current
     if (!footer) return

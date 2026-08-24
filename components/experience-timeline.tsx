@@ -196,10 +196,13 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
         role="region"
         aria-label="Experience timeline"
         onKeyDown={handleKeyDown}
-        style={{
-          height: 'calc(100dvh - var(--experience-nav-h, 65px) - var(--footer-h, 117px))',
-        }}
-        className="flex-1 snap-y snap-mandatory overflow-y-scroll motion-reduce:scroll-auto motion-reduce:snap-none"
+        className={cn(
+          'flex-1 snap-y snap-mandatory overflow-y-scroll motion-reduce:scroll-auto motion-reduce:snap-none',
+          // Fallbacks (117px / 85px) match <main>'s own — see the comment in
+          // app/layout.tsx — so first paint needs no client-side correction.
+          'h-[calc(100dvh-var(--experience-nav-h,65px)-var(--footer-h,117px))]',
+          'sm:h-[calc(100dvh-var(--experience-nav-h,65px)-var(--footer-h,85px))]'
+        )}
       >
         {entries.map((entry, i) => (
           <section
