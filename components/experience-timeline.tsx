@@ -106,15 +106,18 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
         const atTop = scrollable.scrollTop <= 0
         const atBottom = scrollable.scrollTop + scrollable.clientHeight >= scrollable.scrollHeight - 1
         if ((direction === 1 && !atBottom) || (direction === -1 && !atTop)) {
-          // The event's real target may be outside `scrollable` (e.g. the
-          // fixed ContactWidget, which visually overlaps this corner but
-          // isn't a DOM descendant) — native scrolling only follows the
-          // target's own ancestor chain, so it wouldn't reach `scrollable`
-          // in that case. Forward the delta manually instead.
-          if (!scrollable.contains(e.target as Node)) {
-            e.preventDefault()
-            scrollable.scrollTop += e.deltaY
-          }
+          // Always forward the scroll manually rather than relying on the
+          // browser's native fallback: the event's real target can be
+          // outside `scrollable` (blank margin beside the centered content,
+          // or the fixed ContactWidget, which visually overlaps this corner
+          // but isn't a DOM descendant), and native scrolling only follows
+          // the target's own ancestor chain in that case — which would
+          // scroll the outer snap container instead, fighting its own
+          // scroll-snap. Handling every case here uniformly avoids that.
+          e.preventDefault()
+          const pixelDelta =
+            e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * scrollable.clientHeight : e.deltaY
+          scrollable.scrollTop += pixelDelta
           return
         }
       }
@@ -224,7 +227,13 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
           >
             <div
               data-scroll-region
-              className="max-h-[calc(100%-5rem)] w-full max-w-2xl overflow-y-auto py-12 sm:max-h-full"
+              // Below 800px the content fills the section's full width (w-14/w-20 nav +
+              // px-6 leaves less than max-w-2xl of room), reaching to within px-6 of the
+              // fixed ContactWidget in the bottom-right corner — the capped max-height
+              // reserves clearance there. At 800px+ the content hits its max-w-2xl cap
+              // and gets centered with real margin on both sides, clearing the widget
+              // without any reservation needed.
+              className="max-h-[calc(100%-7rem)] w-full max-w-2xl overflow-y-auto py-12 min-[800px]:max-h-full"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                 <h2 className="font-serif text-2xl font-semibold">
