@@ -3,7 +3,6 @@ import { inter, sourceSerif } from './fonts'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Nav } from '@/components/nav'
-import { Footer } from '@/components/footer'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
@@ -42,7 +41,6 @@ export default function RootLayout({
           <div className="flex min-h-screen flex-col">
             <Nav />
             <main className="flex-1">{children}</main>
-            <Footer />
           </div>
         </ThemeProvider>
         <Analytics />

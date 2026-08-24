@@ -44,7 +44,7 @@ Each subfolder is a route, following App Router conventions (a folder's `page.ts
 | `app/experience/page.tsx` | `/experience` | Renders `content/experience.ts` via `components/experience-timeline.tsx` |
 | `app/projects/page.tsx` | `/projects` | Renders `content/projects.ts` |
 | `app/beyond-work/page.tsx` | `/beyond-work` | Non-work interests |
-| `app/layout.tsx` | — | Root layout: fonts, `ThemeProvider`, `Nav`/`Footer` chrome, `Person` JSON-LD, `Analytics` |
+| `app/layout.tsx` | — | Root layout: fonts, `ThemeProvider`, `Nav` chrome, `Person` JSON-LD, `Analytics` |
 | `app/fonts.ts` | — | `next/font/local` config, self-hosted (Inter, Source Serif 4) |
 | `app/globals.css` | — | Tailwind directives + light/dark CSS variable theme tokens |
 | `app/sitemap.ts` | `/sitemap.xml` | Generates the sitemap from the route list |
@@ -53,7 +53,7 @@ Pages are intentionally thin (15–60 lines): they import from `content/` and `c
 
 ### `components/` — shared UI
 
-- `nav.tsx`, `footer.tsx` — site chrome, rendered once in `app/layout.tsx`.
+- `nav.tsx` — site chrome, rendered once in `app/layout.tsx`.
 - `theme-provider.tsx`, `theme-toggle.tsx` — dark/light mode (wraps `next-themes`).
 - `experience-timeline.tsx` — the one non-trivial component (~200 lines); renders the work-history list from `content/experience.ts`.
 - `ui/` — shadcn/ui primitives currently in use: `button`, `input`, `separator`, `sheet`, `skeleton`, `tooltip`. These are scaffolded by the shadcn CLI (per `components.json`) rather than written by hand, and are meant to be edited in place rather than treated as a vendored dependency.
