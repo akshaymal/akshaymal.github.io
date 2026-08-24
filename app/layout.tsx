@@ -39,9 +39,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex min-h-screen flex-col">
+          <div className="flex min-h-dvh flex-col">
             <Nav />
-            <main className="flex-1 pb-[132px] sm:pb-[100px]">{children}</main>
+            <main className="flex-1 pb-[var(--footer-h,117px)]">{children}</main>
             <Footer />
           </div>
         </ThemeProvider>
