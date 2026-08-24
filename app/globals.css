@@ -66,3 +66,23 @@
     @apply bg-background text-foreground overflow-x-hidden;
   }
 }
+
+@layer base {
+  /*
+    Real rendered height of the fixed footer (components/footer.tsx) at each
+    breakpoint — mobile stacks copyright/icons into two rows, sm:+ (640px,
+    Tailwind's default breakpoint, matching footer.tsx's own sm:flex-row) fits
+    them on one. Consumed by app/layout.tsx's <main> padding and
+    components/experience-timeline.tsx's container height calc so nothing
+    renders behind the footer. If the footer's content changes enough to
+    change its height, update these to match.
+  */
+  :root {
+    --footer-h: 117px;
+  }
+  @media (min-width: 640px) {
+    :root {
+      --footer-h: 85px;
+    }
+  }
+}

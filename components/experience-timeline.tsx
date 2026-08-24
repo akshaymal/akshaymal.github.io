@@ -159,10 +159,9 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
         synchronous script, positioned after the element it measures, blocks
         rendering until it has run.
 
-        Footer clearance (--footer-h, used in the calc below) is published by
-        components/footer.tsx itself via a layout effect, not here — the footer
-        is a sibling that renders after this component, so it can't be measured
-        by a script that runs this early.
+        Footer clearance (--footer-h, used in the calc below) doesn't need this
+        trick — it's a plain CSS custom property set in app/globals.css, not
+        measured at runtime.
       */}
       <script
         dangerouslySetInnerHTML={{
@@ -196,13 +195,10 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
         role="region"
         aria-label="Experience timeline"
         onKeyDown={handleKeyDown}
-        className={cn(
-          'flex-1 snap-y snap-mandatory overflow-y-scroll motion-reduce:scroll-auto motion-reduce:snap-none',
-          // Fallbacks (117px / 85px) match <main>'s own — see the comment in
-          // app/layout.tsx — so first paint needs no client-side correction.
-          'h-[calc(100dvh-var(--experience-nav-h,65px)-var(--footer-h,117px))]',
-          'sm:h-[calc(100dvh-var(--experience-nav-h,65px)-var(--footer-h,85px))]'
-        )}
+        style={{
+          height: 'calc(100dvh - var(--experience-nav-h, 65px) - var(--footer-h, 117px))',
+        }}
+        className="flex-1 snap-y snap-mandatory overflow-y-scroll motion-reduce:scroll-auto motion-reduce:snap-none"
       >
         {entries.map((entry, i) => (
           <section

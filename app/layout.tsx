@@ -42,19 +42,11 @@ export default function RootLayout({
           <div className="flex min-h-dvh flex-col">
             <Nav />
             {/*
-              The fallback values here (117px / 85px) match the footer's real
-              rendered height at each breakpoint exactly (mobile two-row vs.
-              sm:+ single-row — see components/footer.tsx), so the static
-              export's first paint already reserves the right amount of space
-              with no client-side correction (a fallback that overshot "for
-              safety" would itself cause a layout shift once
-              components/footer.tsx's ResizeObserver sets the live --footer-h
-              value to the real, smaller number). If the footer's
-              content/height changes, update these to match.
+              --footer-h (app/globals.css) is the fixed footer's real height,
+              which changes by breakpoint — pb-[var(...)] tracks it so nothing
+              renders behind the pinned footer. See components/footer.tsx.
             */}
-            <main className="flex-1 pb-[var(--footer-h,117px)] sm:pb-[var(--footer-h,85px)]">
-              {children}
-            </main>
+            <main className="flex-1 pb-[var(--footer-h,117px)]">{children}</main>
             <Footer />
           </div>
         </ThemeProvider>
