@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { ExperienceEntry } from '@/content/experience'
 
@@ -23,19 +23,27 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
   const lockedRef = useRef(false)
   const reducedMotionRef = useRef(false)
 
-  // Keep the --experience-nav-h custom property current when the window is
-  // resized (e.g. the nav wrapping to a second line). The initial value is
-  // set synchronously by the inline script below, before first paint, so
-  // this effect never causes a visible correction on load — only on an
-  // actual live resize, which Lighthouse's CLS audit doesn't measure.
-  useEffect(() => {
-    function updateNavHeight() {
+  // Keep the --experience-nav-h/--experience-footer-h custom properties current.
+  // The header precedes this component in the DOM, so the inline script below
+  // can measure it synchronously before first paint with no visible correction.
+  // The footer (in app/layout.tsx) renders *after* this component, so it isn't
+  // in the DOM yet when that script runs — this layout effect does the initial
+  // footer measurement instead, immediately after mount (and both header and
+  // footer are re-measured on resize, e.g. the footer wrapping to a second row
+  // on narrow viewports). Both the header and footer are pinned (sticky/fixed —
+  // see issue #25), so the timeline's own height has to leave room for both.
+  useLayoutEffect(() => {
+    function updateChromeHeights() {
       const header = document.querySelector('header')
-      const height = header?.getBoundingClientRect().height ?? 65
-      document.documentElement.style.setProperty('--experience-nav-h', `${height}px`)
+      const footer = document.querySelector('footer')
+      const navHeight = header?.getBoundingClientRect().height ?? 65
+      const footerHeight = footer?.getBoundingClientRect().height ?? 117
+      document.documentElement.style.setProperty('--experience-nav-h', `${navHeight}px`)
+      document.documentElement.style.setProperty('--experience-footer-h', `${footerHeight}px`)
     }
-    window.addEventListener('resize', updateNavHeight)
-    return () => window.removeEventListener('resize', updateNavHeight)
+    updateChromeHeights()
+    window.addEventListener('resize', updateChromeHeights)
+    return () => window.removeEventListener('resize', updateChromeHeights)
   }, [])
 
   useEffect(() => {
@@ -156,10 +164,17 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
         relies on internally to avoid a flash of the wrong theme: a
         synchronous script, positioned after the element it measures, blocks
         rendering until it has run.
+
+        --experience-footer-h can't use this trick — the footer renders after
+        this component in the DOM, so it isn't measurable yet here. It's seeded
+        with the larger (mobile, two-row) footer height so the initial render
+        always over-reserves rather than under-reserves space above the fixed
+        footer; the layout effect above corrects it to the real value before
+        the browser paints.
       */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `(function(){var h=document.querySelector('header');var height=h?h.getBoundingClientRect().height:65;document.documentElement.style.setProperty('--experience-nav-h',height+'px')})()`,
+          __html: `(function(){var h=document.querySelector('header');document.documentElement.style.setProperty('--experience-nav-h',(h?h.getBoundingClientRect().height:65)+'px');document.documentElement.style.setProperty('--experience-footer-h','117px')})()`,
         }}
       />
       <nav
@@ -189,7 +204,10 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
         role="region"
         aria-label="Experience timeline"
         onKeyDown={handleKeyDown}
-        style={{ height: 'calc(100dvh - var(--experience-nav-h, 65px))' }}
+        style={{
+          height:
+            'calc(100dvh - var(--experience-nav-h, 65px) - var(--experience-footer-h, 117px))',
+        }}
         className="flex-1 snap-y snap-mandatory overflow-y-scroll motion-reduce:scroll-auto motion-reduce:snap-none"
       >
         {entries.map((entry, i) => (

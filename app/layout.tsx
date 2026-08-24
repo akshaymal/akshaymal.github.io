@@ -41,7 +41,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex min-h-screen flex-col">
             <Nav />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pb-[132px] sm:pb-[100px]">{children}</main>
             <Footer />
           </div>
         </ThemeProvider>
