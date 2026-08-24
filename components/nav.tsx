@@ -10,7 +10,7 @@ export function Nav() {
   const pathname = usePathname()
 
   return (
-    <header className="border-b border-border">
+    <header className="sticky top-0 z-40 border-b border-border bg-background shadow-sm">
       <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-4 sm:px-6">
         <span className="font-serif text-lg font-semibold">Akshay Malhotra</span>
         <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-6">
