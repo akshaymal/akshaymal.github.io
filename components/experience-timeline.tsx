@@ -83,6 +83,9 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
     if (!container) return
 
     function handleWheel(e: WheelEvent) {
+      // Unreachable in practice — `container` is a stable ref already checked
+      // above — but TS doesn't carry that narrowing into a nested function
+      // declaration's closure, so this satisfies the compiler.
       if (!container) return
       const rect = container.getBoundingClientRect()
       const withinContainer =
@@ -232,7 +235,10 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
               // fixed ContactWidget in the bottom-right corner — the capped max-height
               // reserves clearance there. At 800px+ the content hits its max-w-2xl cap
               // and gets centered with real margin on both sides, clearing the widget
-              // without any reservation needed.
+              // without any reservation needed. The 800px cutoff and 7rem reduction are
+              // sized for ContactWidget's current footprint (components/contact-widget.tsx)
+              // and the current content/experience.ts entries, verified with a real
+              // browser at 375-1280px — re-verify the same way if either changes materially.
               className="max-h-[calc(100%-7rem)] w-full max-w-2xl overflow-y-auto py-12 min-[800px]:max-h-full"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
