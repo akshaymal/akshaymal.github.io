@@ -12,6 +12,7 @@ const socialLinks = [
 export function ContactWidget() {
   return (
     <div
+      role="group"
       className="fixed bottom-4 right-4 z-40 flex items-center gap-0.5 rounded-full border border-border bg-background p-1 shadow-lg sm:bottom-6 sm:right-6"
       aria-label="Contact links"
     >
