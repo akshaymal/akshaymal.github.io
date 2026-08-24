@@ -201,7 +201,7 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
             aria-label={`${entry.title} at ${entry.company}`}
             className="flex h-full snap-start items-center justify-center px-6"
           >
-            <div data-scroll-region className="max-h-full w-full max-w-2xl overflow-y-auto py-12">
+            <div data-scroll-region className="max-h-full w-full max-w-2xl overflow-y-auto pt-12 pb-24">
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                 <h2 className="font-serif text-2xl font-semibold">
                   {entry.title} · {entry.company}
