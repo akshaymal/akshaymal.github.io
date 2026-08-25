@@ -162,26 +162,11 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
   // Desktop wheel interception: one gesture -> one panel, single smooth transition,
   // no native scroll-then-corrective-snap double motion. Touch swipe on mobile is
   // left alone entirely and falls back to native CSS scroll-snap.
-  //
-  // Listens on `window` rather than the container itself, gated by cursor position
-  // rather than event target: the fixed ContactWidget (rendered in app/layout.tsx,
-  // outside this container's DOM subtree) visually overlaps the container's corner,
-  // and a container-scoped listener never sees wheel events whose target is the
-  // widget — creating a dead zone where scrolling over it did nothing.
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
     function handleWheel(e: WheelEvent) {
-      // Unreachable in practice — `container` is a stable ref already checked
-      // above — but TS doesn't carry that narrowing into a nested function
-      // declaration's closure, so this satisfies the compiler.
-      if (!container) return
-      const rect = container.getBoundingClientRect()
-      const withinContainer =
-        e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom
-      if (!withinContainer) return
-
       if (lockedRef.current) {
         e.preventDefault()
         return
@@ -201,12 +186,11 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
         if ((direction === 1 && !atBottom) || (direction === -1 && !atTop)) {
           // Always forward the scroll manually rather than relying on the
           // browser's native fallback: the event's real target can be
-          // outside `scrollable` (blank margin beside the centered content,
-          // or the fixed ContactWidget, which visually overlaps this corner
-          // but isn't a DOM descendant), and native scrolling only follows
-          // the target's own ancestor chain in that case — which would
-          // scroll the outer snap container instead, fighting its own
-          // scroll-snap. Handling every case here uniformly avoids that.
+          // outside `scrollable` (blank margin beside the centered content),
+          // and native scrolling only follows the target's own ancestor
+          // chain in that case — which would scroll the outer snap
+          // container instead, fighting its own scroll-snap. Handling
+          // every case here uniformly avoids that.
           e.preventDefault()
           const pixelDelta =
             e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * scrollable.clientHeight : e.deltaY
@@ -226,8 +210,8 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
       goToIndex(nextIndex)
     }
 
-    window.addEventListener('wheel', handleWheel, { passive: false })
-    return () => window.removeEventListener('wheel', handleWheel)
+    container.addEventListener('wheel', handleWheel, { passive: false })
+    return () => container.removeEventListener('wheel', handleWheel)
   }, [activeIndex, entries.length, goToIndex])
 
   // Tracks the active panel for both the JS-driven desktop path and native
@@ -405,16 +389,7 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
           >
             <div
               data-scroll-region
-              // Below 800px the content fills the section's full width (w-14 nav +
-              // px-6 leaves less than max-w-4xl of room), reaching to within px-6 of the
-              // fixed ContactWidget in the bottom-right corner — the capped max-height
-              // reserves clearance there. At 800px+ the content hits its max-w-4xl cap
-              // and gets centered with real margin on both sides, clearing the widget
-              // without any reservation needed. The 800px cutoff and 7rem reduction are
-              // sized for ContactWidget's current footprint (components/contact-widget.tsx)
-              // and the current content/experience.ts entries, verified with a real
-              // browser at 375-1280px — re-verify the same way if either changes materially.
-              className="flex max-h-[calc(100%-7rem)] w-full max-w-4xl flex-col gap-6 overflow-y-auto py-12 min-[800px]:max-h-full min-[800px]:flex-row min-[800px]:items-center min-[800px]:gap-16"
+              className="flex max-h-full w-full max-w-4xl flex-col gap-6 overflow-y-auto py-12 min-[800px]:flex-row min-[800px]:items-center min-[800px]:gap-16"
             >
               {/* Identity block: logo/initials, company name, date range. Stacks
                   above the details on mobile; becomes its own left column on desktop. */}
