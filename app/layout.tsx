@@ -6,6 +6,7 @@ import { Nav } from '@/components/nav'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://akshaymalhotra.dev'),
   title: {
     default: 'Akshay Malhotra',
     template: '%s | Akshay Malhotra',
