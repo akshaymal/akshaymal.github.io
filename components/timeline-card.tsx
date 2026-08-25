@@ -80,7 +80,7 @@ export function TimelineCard({
 
   return (
     <div
-      className={cn('timeline-card', compact ? 'p-3.5' : 'p-3.5 min-[800px]:p-5')}
+      className={cn('depth-card', compact ? 'p-3.5' : 'p-3.5 min-[800px]:p-5')}
     >
       <div className="flex items-start gap-4">
         {logo && <LogoMark logo={logo} size={size} />}
