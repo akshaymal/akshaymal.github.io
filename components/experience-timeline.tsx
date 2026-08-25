@@ -63,9 +63,18 @@ function railAriaLabel(group: YearGroup, activeIndex: number): string {
 }
 
 function CompanyMark({ entry, className }: { entry: ExperienceEntry; className?: string }) {
-  if (entry.logo) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={entry.logo} alt="" className={cn('rounded-full object-contain', className)} />
+  const [logoFailed, setLogoFailed] = useState(false)
+
+  if (entry.logo && !logoFailed) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={entry.logo}
+        alt=""
+        onError={() => setLogoFailed(true)}
+        className={cn('rounded-full object-contain', className)}
+      />
+    )
   }
   return (
     <div
