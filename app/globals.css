@@ -75,7 +75,7 @@
 }
 
 @layer components {
-  .timeline-card {
+  .depth-card {
     background: hsl(var(--card) / 0.7);
     border: 1px solid hsl(var(--foreground) / 0.07);
     border-radius: 12px;
@@ -87,7 +87,7 @@
   }
 
   @media (min-width: 800px) {
-    .timeline-card {
+    .depth-card {
       border-radius: 16px;
       box-shadow:
         0 8px 24px hsl(var(--foreground) / 0.08),
@@ -98,7 +98,7 @@
   }
 
   @supports not (backdrop-filter: blur(1px)) {
-    .timeline-card {
+    .depth-card {
       background: hsl(var(--card));
     }
   }

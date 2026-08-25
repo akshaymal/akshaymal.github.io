@@ -13,7 +13,7 @@ export default function ProjectsPage() {
       <h1 className="font-serif text-3xl font-semibold">Projects</h1>
       <div className="mt-10 space-y-12">
         {projects.map((project) => (
-          <article key={project.slug}>
+          <article key={project.slug} className="depth-card p-3.5 min-[800px]:p-5">
             <h2 className="text-lg font-semibold">
               {project.link ? (
                 <Link href={project.link} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
