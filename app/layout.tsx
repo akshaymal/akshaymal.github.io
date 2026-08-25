@@ -3,7 +3,6 @@ import { inter, sourceSerif } from './fonts'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Nav } from '@/components/nav'
-import { ContactWidget } from '@/components/contact-widget'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
@@ -43,7 +42,6 @@ export default function RootLayout({
             <Nav />
             <main className="flex-1">{children}</main>
           </div>
-          <ContactWidget />
         </ThemeProvider>
         <Analytics />
       </body>
