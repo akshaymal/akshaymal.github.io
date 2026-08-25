@@ -24,7 +24,7 @@ Chosen after comparing three initial directions (dark/technical, warm/editorial,
 
 **Accent usage:** confident blocks (buttons, section dividers, sidebar strips) rather than thin decorative lines — the accent is the memorability lever, so it needs visual weight to do that job.
 
-**Logo/mark:** wordmark-only for v1 ("Akshay Malhotra" in the serif display face). A designed mark is tracked as [#4](https://github.com/akshaymal/akshaymalhotra.dev/issues/4), deliberately deferred.
+**Logo/mark:** wordmark-only for v1 ("Akshay Malhotra" in the serif display face). A designed mark was deliberately deferred, tracked as [#4](https://github.com/akshaymal/akshaymalhotra.dev/issues/4) — since shipped: the "Woven Diamond" mark (`components/mark.tsx`), used as a nav companion, favicon, and OG-image element.
 
 ## Navigation
 
