@@ -1,6 +1,10 @@
 export interface ExperienceEntry {
   slug: string
   company: string
+  /** Short code (2-3 chars) shown in the year-index rail and as the initials-badge fallback when `logo` is unset. */
+  shortName: string
+  /** Path to a company logo image. Omit to fall back to an initials badge using `shortName`. */
+  logo?: string
   title: string
   startDate: string
   endDate: string | null
@@ -12,6 +16,7 @@ export const experience: ExperienceEntry[] = [
   {
     slug: 'ernst-young-senior-technology-consulting',
     company: 'Ernst & Young',
+    shortName: 'EY',
     title: 'Senior, Technology Consulting',
     startDate: '2023-10',
     endDate: null,
@@ -30,6 +35,7 @@ export const experience: ExperienceEntry[] = [
   {
     slug: 'zs-associates-software-engineer',
     company: 'ZS Associates Inc.',
+    shortName: 'ZS',
     title: 'Software Engineer',
     startDate: '2023-07',
     endDate: '2023-09',
@@ -42,6 +48,7 @@ export const experience: ExperienceEntry[] = [
   {
     slug: 'zs-associates-software-engineer-intern',
     company: 'ZS Associates Inc.',
+    shortName: 'ZS',
     title: 'Software Engineer Intern',
     startDate: '2022-06',
     endDate: '2023-01',
@@ -54,6 +61,7 @@ export const experience: ExperienceEntry[] = [
   {
     slug: 'infoedge-senior-software-engineer',
     company: 'InfoEdge India Limited',
+    shortName: 'IE',
     title: 'Senior Software Engineer',
     startDate: '2018-01',
     endDate: '2021-06',

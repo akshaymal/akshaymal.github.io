@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { ExperienceEntry } from '@/content/experience'
 
@@ -16,6 +16,78 @@ function formatDate(date: string | null): string {
   return `${monthNames[Number(month) - 1]} ${year}`
 }
 
+interface YearGroup {
+  year: string
+  entries: { entry: ExperienceEntry; index: number }[]
+}
+
+// Groups entries by their start-date year (in array order, so first-appearance
+// order determines rail order), collapsing multiple entries in the same year
+// into one node the rail cycles through on activation.
+function groupByStartYear(entries: ExperienceEntry[]): YearGroup[] {
+  const groups: YearGroup[] = []
+  const byYear = new Map<string, YearGroup>()
+  entries.forEach((entry, index) => {
+    const year = entry.startDate.slice(0, 4)
+    let group = byYear.get(year)
+    if (!group) {
+      group = { year, entries: [] }
+      byYear.set(year, group)
+      groups.push(group)
+    }
+    group.entries.push({ entry, index })
+  })
+  return groups
+}
+
+// Which entry within a (possibly multi-entry) year group is "current" for
+// label/cycling purposes: whichever one matches the active panel, or the
+// first entry if the group isn't the active one.
+function activeSubIndex(group: YearGroup, activeIndex: number): number {
+  const idx = group.entries.findIndex((e) => e.index === activeIndex)
+  return idx === -1 ? 0 : idx
+}
+
+function railLabel(group: YearGroup, activeIndex: number): string {
+  if (group.entries.length === 1) return group.entries[0].entry.shortName
+  const sub = activeSubIndex(group, activeIndex)
+  return `${group.entries[sub].entry.shortName} · ${sub + 1}/${group.entries.length}`
+}
+
+function railAriaLabel(group: YearGroup, activeIndex: number): string {
+  const sub = activeSubIndex(group, activeIndex)
+  const { entry } = group.entries[sub]
+  return group.entries.length === 1
+    ? `${entry.company}, ${group.year}`
+    : `${entry.company}, ${group.year}, entry ${sub + 1} of ${group.entries.length}`
+}
+
+function CompanyMark({ entry, className }: { entry: ExperienceEntry; className?: string }) {
+  const [logoFailed, setLogoFailed] = useState(false)
+
+  if (entry.logo && !logoFailed) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={entry.logo}
+        alt=""
+        onError={() => setLogoFailed(true)}
+        className={cn('rounded-full object-contain', className)}
+      />
+    )
+  }
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-center rounded-full bg-primary text-primary-foreground',
+        className
+      )}
+    >
+      <span className="font-serif font-bold">{entry.shortName}</span>
+    </div>
+  )
+}
+
 export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const panelRefs = useRef<(HTMLElement | null)[]>([])
@@ -23,19 +95,26 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
   const lockedRef = useRef(false)
   const reducedMotionRef = useRef(false)
 
-  // Keep the --experience-nav-h custom property current when the window is
-  // resized (e.g. the nav wrapping to a second line). The initial value is
-  // set synchronously by the inline script below, before first paint, so
-  // this effect never causes a visible correction on load — only on an
-  // actual live resize, which Lighthouse's CLS audit doesn't measure.
+  const yearGroups = useMemo(() => groupByStartYear(entries), [entries])
+
+  // Keep the --experience-nav-h and --experience-rail-left custom properties
+  // current when the window is resized (e.g. the nav wrapping to a second
+  // line, or the nav wordmark's centered inset shifting on a wide monitor).
+  // The initial values are set synchronously by the inline script below,
+  // before first paint, so this effect never causes a visible correction on
+  // load — only on an actual live resize, which Lighthouse's CLS audit
+  // doesn't measure.
   useEffect(() => {
-    function updateNavHeight() {
+    function updateMeasurements() {
       const header = document.querySelector('header')
+      const wordmark = header?.querySelector('span')
       const height = header?.getBoundingClientRect().height ?? 65
+      const left = wordmark?.getBoundingClientRect().left ?? 24
       document.documentElement.style.setProperty('--experience-nav-h', `${height}px`)
+      document.documentElement.style.setProperty('--experience-rail-left', `${left}px`)
     }
-    window.addEventListener('resize', updateNavHeight)
-    return () => window.removeEventListener('resize', updateNavHeight)
+    window.addEventListener('resize', updateMeasurements)
+    return () => window.removeEventListener('resize', updateMeasurements)
   }, [])
 
   useEffect(() => {
@@ -68,6 +147,17 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
       lockedRef.current = false
     }, reducedMotionRef.current ? 0 : TRANSITION_MS)
   }, [])
+
+  const handleYearClick = useCallback(
+    (group: YearGroup) => {
+      const isGroupActive = group.entries.some((e) => e.index === activeIndex)
+      const sub = isGroupActive
+        ? (activeSubIndex(group, activeIndex) + 1) % group.entries.length
+        : 0
+      goToIndex(group.entries[sub].index)
+    },
+    [activeIndex, goToIndex]
+  )
 
   // Desktop wheel interception: one gesture -> one panel, single smooth transition,
   // no native scroll-then-corrective-snap double motion. Touch swipe on mobile is
@@ -176,39 +266,124 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
   return (
     <div className="flex">
       {/*
-        Sets --experience-nav-h to the nav's real rendered height before the
+        Sets --experience-nav-h to the nav's real rendered height and
+        --experience-rail-left to the nav wordmark's left offset before the
         browser's first paint, so the container below never needs a client-side
         correction after load (which would show up as layout shift). Same
         technique next-themes (wired in via components/theme-provider.tsx)
         relies on internally to avoid a flash of the wrong theme: a
-        synchronous script, positioned after the element it measures, blocks
+        synchronous script, positioned after the elements it measures, blocks
         rendering until it has run.
       */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `(function(){var h=document.querySelector('header');var height=h?h.getBoundingClientRect().height:65;document.documentElement.style.setProperty('--experience-nav-h',height+'px')})()`,
+          __html: `(function(){var h=document.querySelector('header');var w=h&&h.querySelector('span');var height=h?h.getBoundingClientRect().height:65;var left=w?w.getBoundingClientRect().left:24;document.documentElement.style.setProperty('--experience-nav-h',height+'px');document.documentElement.style.setProperty('--experience-rail-left',left+'px')})()`,
         }}
       />
+
+      {/* Mobile year strip (below 800px): a slim vertical strip, no dark capsule. */}
       <nav
         aria-label="Experience timeline navigation"
-        className="flex w-14 flex-none flex-col items-center gap-1 border-r border-border py-6 sm:w-20"
+        className="flex w-14 flex-none flex-col items-center justify-evenly border-r border-border py-5 min-[800px]:hidden"
       >
-        {entries.map((entry, i) => (
-          <button
-            key={entry.slug}
-            type="button"
-            onClick={() => goToIndex(i)}
-            aria-current={activeIndex === i ? 'true' : undefined}
-            aria-label={`${entry.company}, ${entry.startDate.slice(0, 4)}`}
-            className={cn(
-              'rounded-md px-2 py-2 text-sm font-medium tabular-nums transition-colors hover:text-primary',
-              activeIndex === i ? 'text-primary font-semibold' : 'text-muted-foreground'
-            )}
-          >
-            {entry.startDate.slice(0, 4)}
-          </button>
-        ))}
+        {yearGroups.map((group) => {
+          const isActive = group.entries.some((e) => e.index === activeIndex)
+          return (
+            <button
+              key={group.year}
+              type="button"
+              onClick={() => handleYearClick(group)}
+              aria-current={isActive ? 'true' : undefined}
+              aria-label={railAriaLabel(group, activeIndex)}
+              className="flex flex-col items-center gap-1 px-1 py-1"
+            >
+              <span
+                className={cn(
+                  'block h-1.5 w-1.5 rounded-full',
+                  isActive ? 'bg-primary' : 'border border-muted-foreground/40 bg-background'
+                )}
+              />
+              <span
+                className={cn(
+                  'text-[11px] font-medium tabular-nums',
+                  isActive ? 'font-semibold text-primary' : 'text-muted-foreground'
+                )}
+              >
+                {group.year}
+              </span>
+              {group.entries.length > 1 && (
+                <span className="whitespace-nowrap text-[8px] font-semibold text-muted-foreground/70">
+                  {railLabel(group, activeIndex)}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </nav>
+
+      {/* Desktop year index (800px+): a dark capsule anchored to the same left
+          inset as the nav wordmark, not the raw viewport edge — a raw-edge rail
+          disappears on a large monitor because it's nowhere near the reading
+          column. */}
+      <div
+        className="hidden flex-none items-center justify-center min-[800px]:flex"
+        style={{ width: 116, marginLeft: 'var(--experience-rail-left, 24px)' }}
+      >
+        <nav
+          aria-label="Experience timeline navigation"
+          className="relative flex h-[78%] w-[104px] flex-col items-center justify-evenly rounded-full py-8 shadow-lg"
+          style={{ background: 'hsl(var(--rail-bg))' }}
+        >
+          <div
+            className="absolute left-1/2 top-10 bottom-10 w-px -translate-x-1/2"
+            style={{ background: 'hsl(var(--rail-ink) / 0.16)' }}
+          />
+          {yearGroups.map((group) => {
+            const isActive = group.entries.some((e) => e.index === activeIndex)
+            return (
+              <button
+                key={group.year}
+                type="button"
+                onClick={() => handleYearClick(group)}
+                aria-current={isActive ? 'true' : undefined}
+                aria-label={railAriaLabel(group, activeIndex)}
+                className="relative z-10 flex flex-col items-center gap-1.5 px-2.5 py-1"
+                style={{ background: 'hsl(var(--rail-bg))' }}
+              >
+                {isActive ? (
+                  <span
+                    className="block h-[18px] w-[18px] rounded-full"
+                    style={{
+                      background: 'hsl(var(--primary))',
+                      boxShadow: '0 0 0 5px hsl(var(--rail-bg)), 0 0 0 7px hsl(var(--primary) / 0.35)',
+                    }}
+                  />
+                ) : (
+                  <span
+                    className="block h-3 w-3 rounded-full border-2"
+                    style={{ borderColor: 'hsl(var(--rail-ink) / 0.28)' }}
+                  />
+                )}
+                <span
+                  className="text-sm font-bold tabular-nums"
+                  style={{ color: isActive ? 'hsl(19 75% 60%)' : 'hsl(var(--rail-ink) / 0.62)' }}
+                >
+                  {group.year}
+                </span>
+                <span
+                  className={cn(
+                    'whitespace-nowrap text-[10px] font-semibold',
+                    !isActive && group.entries.length === 1 && 'uppercase tracking-wide'
+                  )}
+                  style={{ color: isActive ? 'hsl(var(--rail-ink) / 0.65)' : 'hsl(var(--rail-ink) / 0.4)' }}
+                >
+                  {railLabel(group, activeIndex)}
+                </span>
+              </button>
+            )
+          })}
+        </nav>
+      </div>
 
       <div
         ref={containerRef}
@@ -230,31 +405,45 @@ export function ExperienceTimeline({ entries }: { entries: ExperienceEntry[] }) 
           >
             <div
               data-scroll-region
-              // Below 800px the content fills the section's full width (w-14/w-20 nav +
-              // px-6 leaves less than max-w-2xl of room), reaching to within px-6 of the
+              // Below 800px the content fills the section's full width (w-14 nav +
+              // px-6 leaves less than max-w-4xl of room), reaching to within px-6 of the
               // fixed ContactWidget in the bottom-right corner — the capped max-height
-              // reserves clearance there. At 800px+ the content hits its max-w-2xl cap
+              // reserves clearance there. At 800px+ the content hits its max-w-4xl cap
               // and gets centered with real margin on both sides, clearing the widget
               // without any reservation needed. The 800px cutoff and 7rem reduction are
               // sized for ContactWidget's current footprint (components/contact-widget.tsx)
               // and the current content/experience.ts entries, verified with a real
               // browser at 375-1280px — re-verify the same way if either changes materially.
-              className="max-h-[calc(100%-7rem)] w-full max-w-2xl overflow-y-auto py-12 min-[800px]:max-h-full"
+              className="flex max-h-[calc(100%-7rem)] w-full max-w-4xl flex-col gap-6 overflow-y-auto py-12 min-[800px]:max-h-full min-[800px]:flex-row min-[800px]:items-center min-[800px]:gap-16"
             >
-              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                <h2 className="font-serif text-2xl font-semibold">
-                  {entry.title} · {entry.company}
-                </h2>
-                <span className="text-sm text-muted-foreground">
-                  {formatDate(entry.startDate)} – {formatDate(entry.endDate)}
-                </span>
+              {/* Identity block: logo/initials, company name, date range. Stacks
+                  above the details on mobile; becomes its own left column on desktop. */}
+              <div className="flex items-center gap-4 min-[800px]:w-[220px] min-[800px]:flex-none min-[800px]:flex-col min-[800px]:items-start min-[800px]:gap-6">
+                <CompanyMark
+                  entry={entry}
+                  className="h-12 w-12 flex-none text-base min-[800px]:h-[88px] min-[800px]:w-[88px] min-[800px]:text-2xl"
+                />
+                <div className="min-w-0">
+                  <div className="font-serif text-lg font-semibold leading-tight min-[800px]:text-2xl">
+                    {entry.company}
+                  </div>
+                  <div className="mt-0.5 text-sm text-muted-foreground tabular-nums min-[800px]:mt-2 min-[800px]:text-base">
+                    {formatDate(entry.startDate)} – {formatDate(entry.endDate)}
+                  </div>
+                </div>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">{entry.summary}</p>
-              <ul className="mt-6 list-disc space-y-3 pl-5 text-sm leading-relaxed">
-                {entry.highlights.map((highlight, j) => (
-                  <li key={j}>{highlight}</li>
-                ))}
-              </ul>
+
+              <div className="h-px bg-border min-[800px]:hidden" />
+
+              <div className="min-w-0 flex-1">
+                <h2 className="font-serif text-xl font-semibold min-[800px]:text-3xl">{entry.title}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">{entry.summary}</p>
+                <ul className="mt-6 list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  {entry.highlights.map((highlight, j) => (
+                    <li key={j}>{highlight}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </section>
         ))}
