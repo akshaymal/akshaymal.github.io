@@ -51,7 +51,7 @@ export function ContactDropdown({ compact = false, className }: { compact?: bool
         onClick={() => setOpen((v) => !v)}
         className={cn(
           'inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-primary text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90',
-          compact ? 'w-9' : 'px-4'
+          compact ? 'px-3' : 'px-4'
         )}
       >
         <Mail className="h-4 w-4 flex-none" />
