@@ -92,7 +92,7 @@ New entries are typically added via the `add-project` / `add-experience` Claude 
 ### `docs/` — process and design docs
 
 - `WORKFLOW.md` — full reference for the issue-driven development process (label taxonomy, the `issue-refiner`/`work-issue` lifecycle, CI gates).
-- `superpowers/specs/`, `superpowers/plans/` — design and planning docs for past work (e.g. the Claude Code harness setup, a site redesign).
+- `superpowers/specs/`, `superpowers/plans/` — design and planning docs for past and future work (e.g. the Claude Code harness setup, a site redesign, and a deferred backend-integration spec not yet ready to implement).
 
 ### `.claude/` — Claude Code configuration for this repo
 

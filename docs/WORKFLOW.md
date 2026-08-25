@@ -49,6 +49,12 @@ Every issue gets exactly one Type, one Priority, one Area label.
 4. **CI runs** (`.github/workflows/ci.yml`): lint, typecheck, build, bundle-size budget, internal-link check, a Playwright viewport-overflow check across every route at four widths, and Lighthouse CI across every route (all blocking — see below).
 5. **You review and merge.** No autonomous merges, ever — branch protection enforces this at the repo level, not just by convention.
 
+## Spec-scoped work (not yet an issue)
+
+Some work belongs to a spec that's still being drafted, or is deliberately deferred and not ready to be picked up — e.g. Spec 3: Backend Integration (`docs/superpowers/specs/2026-08-25-backend-integration-design.md`), which moves site content out of the repo onto an AWS/Azure-hosted backend. Work of that kind does **not** get filed as a GitHub issue via `task.yml`/`issue-refiner`. Filing it as an issue implies it's actionable and could be picked up via `work-issue`, which isn't true yet for spec-stage work — instead, log it as an entry in that spec's own open-questions/future-work section, directly in the doc.
+
+Once a spec reaches "ready to implement" (the spec doc itself says so, or the user says so), break it into real GitHub issues through the normal `issue-refiner` path at that point — one issue per concrete, scoped piece of work, same as any other issue.
+
 ## Viewport verification
 
 `e2e/viewport-overflow.spec.ts` (Playwright) renders every route against the static-exported `out/` output at 375px/393px/768px/1280px and asserts nothing overflows horizontally. Added after a nav overflow bug shipped undetected during the Spec 2 redesign, because nothing in the harness rendered a real viewport — every prior check only inspected the static HTML as text. Runs both in `work-issue`'s self-verify step and as a blocking `viewport` CI job. See [#13](https://github.com/akshaymal/akshaymalhotra.dev/issues/13).

@@ -1,6 +1,6 @@
 # akshaymalhotra.dev
 
-Personal portfolio for Akshay Malhotra. Fast, professional, direct, lightweight — see `docs/superpowers/specs/2026-08-22-harness-foundation-design.md` for the harness design, and the Spec 2 design doc (once written) for visual/content decisions.
+Personal portfolio for Akshay Malhotra. Fast, professional, direct, lightweight — see `docs/superpowers/specs/2026-08-22-harness-foundation-design.md` for the harness design (Spec 1), `docs/superpowers/specs/2026-08-22-site-redesign-design.md` for visual/content decisions (Spec 2, current architecture), and `docs/superpowers/specs/2026-08-25-backend-integration-design.md` for the future backend-integration direction (Spec 3, not yet ready to implement).
 
 ## Stack
 
@@ -31,6 +31,8 @@ All planned work — features, content, chores, bugs — is tracked as a GitHub 
 4. **Never push directly to `main`.** All changes land via PR, and CI (lint, typecheck, build, bundle-size, link-check, viewport-overflow check, Lighthouse) must pass.
 
 **Issue creation rule:** Never create a GitHub issue directly via the API or MCP tools. Always invoke the `issue-refiner` skill instead — it enforces the required Type/Priority/Area labels and acceptance criteria before the issue is filed. The `.github/ISSUE_TEMPLATE/task.yml` form (used by the GitHub web UI) and the `issue-refiner` skill are the only two sanctioned paths for creating issues.
+
+**Spec-stage work exception:** work belonging to a spec that's still being drafted or deliberately deferred (e.g. Spec 3: Backend Integration) does not get filed as a GitHub issue — log it in that spec doc's own open-questions/future-work section instead, since it isn't actionable yet. See `docs/WORKFLOW.md`'s "Spec-scoped work" section.
 
 ## Content skills
 
