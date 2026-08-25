@@ -39,7 +39,7 @@ Config-driven top nav — a plain data array (`{label, href}[]`), not hardcoded 
 
 No overflow/"More" menu needed at 4 items; the config-driven structure means adding a 5th (e.g. when Blog ships, per [#6](https://github.com/akshaymal/akshaymalhotra.dev/issues/6)) is a one-line addition to the array. An overflow pattern is only worth building once the list actually approaches 6+ items — YAGNI for v1.
 
-No "Contact" nav item or route. Social/contact links live in a persistent footer instead (see below) — a single-item Contact page would just duplicate what's already visible on every page via the footer.
+No "Contact" nav item or route. Social/contact links live behind a Contact button in the header instead (see below) — a single-item Contact page would just duplicate what's already one click away. (This started as a persistent footer, moved to a floating pill per [#27](https://github.com/akshaymal/akshaymalhotra.dev/issues/27), then into the header's collapsible Contact dropdown per [#38](https://github.com/akshaymal/akshaymalhotra.dev/issues/38).)
 
 ## Pages
 
@@ -61,8 +61,8 @@ Renders `content/projects.ts` entries (schema already exists). **Open content qu
 ### `/beyond-work`
 Consolidates the five existing hobby pages (motorsports, karting, sim-racing, travel, race-marshal) into sections on one page, rather than five thin routes — matches the "fun without undermining professional" brief from the original brainstorm: personality lives in voice/content, not in fragmenting the IA.
 
-### Footer (all pages)
-Persistent across every route: GitHub, LinkedIn, Instagram, email icons — same content the current sidebar footer already has (`components/app-sidebar.tsx`'s footer block), relocated rather than reinvented.
+### Contact (all pages)
+GitHub, LinkedIn, Instagram, email — originally a persistent footer, now a Contact button in the header (`components/contact-dropdown.tsx`) that opens a panel with the same links; see [#38](https://github.com/akshaymal/akshaymalhotra.dev/issues/38).
 
 ## SEO & analytics
 
@@ -76,8 +76,8 @@ Baked in during initial build, not bolted on after — matches the stated discov
 
 ## Component architecture
 
-- `components/nav.tsx` — replaces `components/app-sidebar.tsx`; renders the config-driven top nav array
-- `components/footer.tsx` — new, persistent social/contact links
+- `components/nav.tsx` — replaces `components/app-sidebar.tsx`; renders the config-driven top nav array, plus the header's Contact button and theme toggle
+- `components/contact-dropdown.tsx` — the header Contact button's dropdown panel (social/contact links)
 - `components/theme-toggle.tsx` — new, dark/light toggle (system-preference default)
 - `app/page.tsx` — rewritten as Home/About
 - `app/experience/page.tsx` — rewritten to render `content/experience.ts`
