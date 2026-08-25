@@ -20,7 +20,7 @@ const sections: Section[] = [
 
 export default function BeyondWorkPage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
+    <div className="mx-auto max-w-6xl px-6 py-16">
       <h1 className="font-serif text-3xl font-semibold">Beyond Work</h1>
       <p className="mt-4 max-w-xl text-sm text-muted-foreground">
         This page is a placeholder — real content for each section below is a tracked

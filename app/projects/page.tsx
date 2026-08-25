@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
+    <div className="mx-auto max-w-6xl px-6 py-16">
       <h1 className="font-serif text-3xl font-semibold">Projects</h1>
       <div className="mt-10 space-y-12">
         {projects.map((project) => (

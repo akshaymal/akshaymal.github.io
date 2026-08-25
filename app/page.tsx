@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-20">
+    <div className="mx-auto max-w-6xl px-6 py-20">
       <p className="font-serif text-3xl font-semibold leading-tight sm:text-4xl">
         Senior software engineer building reliable distributed systems.
       </p>
