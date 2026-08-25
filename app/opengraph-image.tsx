@@ -21,7 +21,7 @@ export default function OpengraphImage() {
         }}
       >
         <Mark ink="#1E1A15" accent="#C4511C" weight={2.4} style={{ width: 220, height: 220, flexShrink: 0 }} />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 64, fontWeight: 700 }}>Akshay Malhotra</div>
           <div style={{ fontSize: 30, opacity: 0.72, marginTop: 12 }}>
             Senior software engineer building reliable distributed systems.
