@@ -28,7 +28,7 @@ Chosen after comparing three initial directions (dark/technical, warm/editorial,
 
 ## Navigation
 
-Config-driven top nav — a plain data array (`{label, href}[]`), not hardcoded JSX — rendered as a horizontal nav bar. Four items:
+Config-driven top nav — a plain data array (`{label, href}[]`), not hardcoded JSX — rendered as a horizontal nav bar. Five items:
 
 | Label | Route |
 |---|---|
@@ -36,8 +36,9 @@ Config-driven top nav — a plain data array (`{label, href}[]`), not hardcoded 
 | Experience | `/experience` |
 | Projects | `/projects` |
 | Beyond Work | `/beyond-work` |
+| Blog | `/blog` |
 
-No overflow/"More" menu needed at 4 items; the config-driven structure means adding a 5th (e.g. when Blog ships, per [#6](https://github.com/akshaymal/akshaymalhotra.dev/issues/6)) is a one-line addition to the array. An overflow pattern is only worth building once the list actually approaches 6+ items — YAGNI for v1.
+Started at four items with no overflow/"More" menu needed; the config-driven structure meant adding the 5th when Blog shipped ([#6](https://github.com/akshaymal/akshaymalhotra.dev/issues/6)) was the one-line addition to the array this was designed for. An overflow pattern is only worth building once the list actually approaches 6+ items — YAGNI still holds.
 
 No "Contact" nav item or route. Social/contact links live behind a Contact button in the header instead (see below) — a single-item Contact page would just duplicate what's already one click away. (This started as a persistent footer, moved to a floating pill per [#27](https://github.com/akshaymal/akshaymalhotra.dev/issues/27), then into the header's collapsible Contact dropdown per [#38](https://github.com/akshaymal/akshaymalhotra.dev/issues/38).)
 
@@ -94,4 +95,4 @@ A resume is now in hand (provided 2026-08-22) — **but the user has flagged it 
 
 ## Non-goals (this spec)
 
-Blog, real contact form, designed logo/mark — all explicitly deferred, tracked as issues [#4](https://github.com/akshaymal/akshaymalhotra.dev/issues/4), [#5](https://github.com/akshaymal/akshaymalhotra.dev/issues/5), [#6](https://github.com/akshaymal/akshaymalhotra.dev/issues/6).
+Real contact form, designed logo/mark — deferred, tracked as issues [#4](https://github.com/akshaymal/akshaymalhotra.dev/issues/4) and [#5](https://github.com/akshaymal/akshaymalhotra.dev/issues/5). Blog was also deferred here but has since shipped as a fast-follow, per [#6](https://github.com/akshaymal/akshaymalhotra.dev/issues/6) — see the Navigation section above.
