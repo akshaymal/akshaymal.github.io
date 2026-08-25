@@ -12,19 +12,23 @@ function NavLinks({ className }: { className?: string }) {
   const pathname = usePathname()
   return (
     <>
-      {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            'text-sm font-medium transition-colors hover:text-primary',
-            pathname === item.href ? 'text-primary' : 'text-muted-foreground',
-            className
-          )}
-        >
-          {item.label}
-        </Link>
-      ))}
+      {navItems.map((item) => {
+        const isActive =
+          item.href === '/' ? pathname === '/' : pathname === item.href || pathname.startsWith(`${item.href}/`)
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              'text-sm font-medium transition-colors hover:text-primary',
+              isActive ? 'text-primary' : 'text-muted-foreground',
+              className
+            )}
+          >
+            {item.label}
+          </Link>
+        )
+      })}
     </>
   )
 }

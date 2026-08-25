@@ -1,6 +1,14 @@
 import { test, expect } from '@playwright/test'
+import { getAllPosts } from '../lib/posts'
 
-const routes = ['/', '/experience', '/projects', '/beyond-work', '/blog', '/blog/how-this-site-gets-built']
+const routes = [
+  '/',
+  '/experience',
+  '/projects',
+  '/beyond-work',
+  '/blog',
+  ...getAllPosts().map((post) => `/blog/${post.slug}`),
+]
 
 const viewports = [
   { name: 'iPhone SE', width: 375, height: 667 },

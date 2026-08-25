@@ -108,7 +108,7 @@ This is tooling *for developing the site*, not something the site itself depends
 
 ### Root config files
 
-`components.json` (shadcn/ui config — style, aliases, Tailwind wiring), `tailwind.config.ts`, `next.config.js` (static export settings), `tsconfig.json`, `postcss.config.js`, `.eslintrc.json`, `.lighthouserc.json`, `bundle-budget.json`, `playwright.config.ts`.
+`components.json` (shadcn/ui config — style, aliases, Tailwind wiring), `tailwind.config.ts`, `next.config.js` (static export settings), `tsconfig.json`, `postcss.config.js`, `.eslintrc.json`, `.lighthouserc.js`, `bundle-budget.json`, `playwright.config.ts`.
 
 ## Commands
 
