@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { navItems } from '@/lib/nav-items'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ContactDropdown } from '@/components/contact-dropdown'
+import { Mark } from '@/components/mark'
 import { cn } from '@/lib/utils'
 
 function NavLinks({ className }: { className?: string }) {
@@ -32,7 +33,8 @@ export function Nav() {
   return (
     <header className="border-b border-border">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-        <div className="flex flex-1 items-center">
+        <div className="flex flex-1 items-center gap-2">
+          <Mark className="h-6 w-6 shrink-0 text-foreground" />
           <span className="whitespace-nowrap font-serif text-lg font-semibold">Akshay Malhotra</span>
         </div>
 
