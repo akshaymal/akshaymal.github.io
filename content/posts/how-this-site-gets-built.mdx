@@ -1,0 +1,58 @@
+---
+title: "How This Site Gets Built"
+date: "2026-08-25"
+summary: "This portfolio ships through GitHub issues, a Claude Code harness with an independent review gate, and CI checks that have already caught three real bugs — the mechanism, and what it suggests for enterprise application design."
+---
+
+This site is built and maintained almost entirely through Claude Code. Not "I asked an AI to build my portfolio." It's a specific, repeatable process. Every change starts as a GitHub issue, gets implemented against explicit acceptance criteria, passes an independent review, and clears CI before it reaches production. The interesting part isn't that an agent wrote the code. It's the harness around it — the parts that make it safe to hand off a piece of work and trust what comes back.
+
+## The problem with "just prompt it"
+
+Prompting an agent to "add a blog" and accepting whatever it produces works for a demo. It doesn't hold up over months of real changes, because nothing stops scope from drifting, nothing catches an edge case the agent didn't think of, and nothing verifies the result works before it ships. The fix isn't a smarter prompt. It's the same fix that works for human teams: unambiguous specs, a second set of eyes that didn't write the code, and automated checks that don't rely on anyone remembering to run them.
+
+## The mechanism
+
+**Issues are the source of truth.** Every planned change — feature, content, chore, bug — is a GitHub issue, not a TODO file or a chat history. Each one carries exactly one Type (`feature` / `content` / `chore` / `bug`), one Priority (`P1`–`P3`), and one Area (`content` / `ui` / `seo` / `infra` / `harness`) label. No free-form labels.
+
+**A rough issue doesn't get worked on.** The `issue-refiner` skill interviews whoever filed it — pressing for the actual outcome first, then the implementation options, until acceptance criteria and a definition of done are concrete and don't overlap with other open issues. Only then does it get the `agent-ready` label. This issue (blog infrastructure, plus this specific first post) went through that same interview before a single line of code was written.
+
+**Implementation follows the issue, not the other way around.** Saying "work on issue #N" triggers the `work-issue` skill: branch off `main`, implement the acceptance criteria one at a time, then push. Before that push, it self-verifies locally — lint, typecheck, build, a bundle-size budget check, a broken-internal-link scan, and a Playwright check that renders every route at four viewport widths and asserts nothing overflows.
+
+**A fresh subagent reviews the diff — with zero memory of why the change was made.** This is the part most "AI coding" setups skip. Before a PR opens, a separate Claude Code subagent gets the diff, the acceptance criteria, and the codebase — nothing else. It doesn't see the reasoning that produced the implementation, which is the same reason a second human reviewer catches things the author can't: shared context hides assumptions from the person who made them. The review is scoped to correctness only (logic bugs, missed edge cases) — style and anything lint/typecheck already enforce is explicitly out of scope, so the review budget goes where the tooling can't reach. It runs on a smaller model by default and upgrades automatically for changes that touch shared types, layout components, CI config, or global styles — proportional scrutiny instead of a flat policy.
+
+**CI is the gate that doesn't trust memory.** Every PR runs lint, typecheck, `next build`, the bundle-size and internal-link checks, the viewport-overflow Playwright suite across every route, and Lighthouse CI — Performance, Accessibility, Best Practices, and SEO each required to score at least 0.90, on every route, blocking.
+
+| Layer | Catches |
+|---|---|
+| Local pre-commit hook | Lint/typecheck failures, before they're even committed |
+| Self-verify (in `work-issue`) | Build breaks, bundle bloat, broken links, viewport overflow |
+| Independent review subagent | Logic bugs and edge cases invisible to the implementer's own assumptions |
+| CI | All of the above, reproducibly, in a clean environment — plus Lighthouse |
+
+**A human still merges.** Branch protection blocks direct pushes to `main` and requires CI to pass — but the real human-in-the-loop step is reviewing the diff before clicking merge, not a rubber-stamped approval. No merge happens without that.
+
+## What broke, and what got added because of it
+
+None of this shipped complete on day one. Three real failures turned into permanent gates:
+
+- **A 0.554 Cumulative Layout Shift on `/experience`.** Lighthouse CI caught a client-computed container height applying after first paint. Pure-CSS fixes (flexbox, then Grid) got tried and reverted — the fix that actually worked measures the nav's real height with a synchronous inline script, positioned right after the nav in the static HTML, that sets a CSS custom property before the browser's first paint. It's the same technique `next-themes` already used in this codebase to prevent a flash of the wrong theme. Lighthouse went from a non-blocking report-only job to a blocking one once there was real content to score.
+- **A lockfile that passed locally and failed CI, identically, twice.** Local development runs npm 11.x; CI's Node 20 image bundles a different npm major. The fix was a cheap one: pin an `npm ci --dry-run` under npm 10 as part of self-verification, whenever `package.json` or the lockfile changes, so version-dependent lockfile drift gets caught before the push instead of after.
+- **A nav overflow bug that shipped clean.** Every check up to that point inspected static HTML as text — nothing rendered an actual browser viewport. The bug reached `main` because nothing could have caught it. The fix was the Playwright viewport-overflow suite described above, now required both in self-verify and as a blocking CI job.
+
+The pattern each time is the same: a real failure gets root-caused, and the fix is a permanent, automated check — not a note to "be more careful next time."
+
+## What this suggests for enterprise application design
+
+None of the individual pieces here are new. Spec-before-work, independent review, CI gates, and human sign-off before merge are standard practice at any team that takes shipping seriously. What's different is the economics once an agent is producing the first draft.
+
+**A vague ticket used to be a PM's problem to catch. Now it's a gate you can run.** "Are the acceptance criteria unambiguous" is exactly the kind of judgment call that used to depend on a specific reviewer's diligence. `issue-refiner` shows that step can be interviewed for, consistently, before anyone starts building — which matters more once the person picking up the ticket is an agent that will build the wrong thing without flagging the ambiguity.
+
+**Proportional review scales in a way flat review policy never could.** Reviewing every diff at the same depth is expensive with human reviewers, so most teams don't — they triage by gut feel. Once "high blast radius" can be named explicitly — shared types, layout primitives, CI config, global styles — it can be enforced as a rule instead of a habit. That turns tiered scrutiny (cheap review for scoped changes, heavier review for changes that ripple) into something you run on every change, not just the ones someone remembered to flag.
+
+**Guardrails only work if they're runnable, not remembered.** Every fix in the previous section replaced "someone should remember to check this" with a script that fails the build if it's wrong. That's not an AI-specific idea — it's the same argument for any CI gate. But it gets sharper as change volume goes up. An agent won't accumulate the tribal memory a senior engineer would. If a guardrail isn't automated, it doesn't exist for the agent — and it degrades for the humans too.
+
+**Structured data is a stronger contract than a prose instruction.** This site's content lives in typed TypeScript modules (`content/projects.ts`, `content/experience.ts`, and now MDX frontmatter with a fixed shape for the blog) instead of a database or CMS. Telling an agent "keep the tone professional" is a request it can silently miss. Requiring output to satisfy a TypeScript interface is a contract the compiler enforces before a human ever reads it. The broader implication for enterprise systems generating or ingesting agent output: define the schema before you define the prompt.
+
+**Scoped context beats a bigger context window.** `docs/superpowers/INDEX.md` in this repo maps "which files does your change touch" to "which design docs are relevant," so a session doesn't read every architecture doc for every change. That's partly a token-budget optimization. It's also good onboarding — the same discipline a new human hire benefits from and rarely gets. Writing it down felt like overhead until an agent's context window put a real, measurable cost on skipping it.
+
+None of this requires an agent to work. It requires the same discipline teams already claim to have — explicit specs, independent review, automated gates, a human who looks before merging. What changes is the cost-benefit of building it: once code volume can scale past what a small team can review by feel, the guardrails you didn't bother to automate are the ones that let something bad through.
