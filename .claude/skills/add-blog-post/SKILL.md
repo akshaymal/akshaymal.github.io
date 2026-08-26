@@ -56,6 +56,7 @@ Ground each beat in the supporting inputs and voice sample gathered in steps 1�
 
 **Craft habits to apply while drafting every beat** (standard, tested habits from journalism/editorial writing — not novel, but easy to drop under time pressure):
 
+- **Go deep, not wide.** Each beat should carry more than one concrete example or reasoning step before landing its point — a single anecdote per beat reads thin. When a beat feels short, the fix is more texture within it (another example, the actual reasoning instead of just the conclusion, a specific counterpoint considered and dismissed) — not padding, and not adding a fourth beat. Depth per beat, not length for its own sake.
 - **Front-load.** Put the most important point in the first paragraph, even in the Hook. Don't make the reader wait for the payoff — the inverted pyramid, not a slow build.
 - **Show, don't tell.** Lead with the concrete moment/example/number before the abstraction it supports. "CI caught a 0.554 CLS regression" beats "performance was a problem" — specifics are what make a post sound like it happened to someone, not like a summary.
 - **One post, one thesis.** If a tangent doesn't serve the one-sentence thesis from step 1, cut it or split it into its own post. Don't let scope creep in mid-draft.
