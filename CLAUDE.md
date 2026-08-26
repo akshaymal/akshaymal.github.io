@@ -38,6 +38,7 @@ All planned work — features, content, chores, bugs — is tracked as a GitHub 
 
 - `add-project` — new entry in `content/projects.ts`
 - `add-experience` — new entry in `content/experience.ts`
+- `add-blog-post` — new entry in `content/posts/`, co-drafted body via `doc-coauthoring`
 - `sync-resume` — reconcile site content against an updated resume, surfacing drift rather than auto-overwriting
 
 ## Tone brief (applies to all copy)
