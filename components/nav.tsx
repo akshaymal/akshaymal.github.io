@@ -41,7 +41,7 @@ export function Nav() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <div className="flex shrink-0 items-center gap-2">
           <Mark className="h-6 w-6 shrink-0 text-foreground" />
-          <span className="hidden whitespace-nowrap font-serif text-lg font-semibold lg:inline">Akshay Malhotra</span>
+          <span className="whitespace-nowrap font-serif text-lg font-semibold sm:hidden lg:inline">Akshay Malhotra</span>
         </div>
 
         <nav className="hidden flex-1 items-center justify-center gap-3 sm:flex lg:gap-6">
