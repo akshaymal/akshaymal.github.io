@@ -25,6 +25,8 @@ Ask the user for:
 
 Read/fetch every supporting input before drafting starts. These ground the post's content — they are not a substitute for co-drafting.
 
+**Before moving on, pin down the one-sentence thesis.** Ask the user to state, in one sentence, what this post is actually arguing or showing — not its topic, its point (e.g. not "a post about my marathon," but "training for time instead of distance is what finally got me under 4 hours"). If they can't yet, that's the first thing to work out together, before drafting — a post without a one-sentence answer to "what's this actually about" tends to wander, and it's much cheaper to fix that now than after a full draft.
+
 ## 2. Voice sample (once, then reused)
 
 Check whether `docs/voice-sample.md` exists.
@@ -52,6 +54,14 @@ Pick the scaffold from the category chosen in step 1:
 
 Ground each beat in the supporting inputs and voice sample gathered in steps 1–2. Match the user's real voice, not a generic explanatory tone — no hedging, no listicle-itis, no "in today's world"-style filler transitions.
 
+**Craft habits to apply while drafting every beat** (standard, tested habits from journalism/editorial writing — not novel, but easy to drop under time pressure):
+
+- **Front-load.** Put the most important point in the first paragraph, even in the Hook. Don't make the reader wait for the payoff — the inverted pyramid, not a slow build.
+- **Show, don't tell.** Lead with the concrete moment/example/number before the abstraction it supports. "CI caught a 0.554 CLS regression" beats "performance was a problem" — specifics are what make a post sound like it happened to someone, not like a summary.
+- **One post, one thesis.** If a tangent doesn't serve the one-sentence thesis from step 1, cut it or split it into its own post. Don't let scope creep in mid-draft.
+- **Active voice, short sentences.** Default to active voice and vary sentence length; a string of same-length sentences reads flat and is a common AI tell.
+- **Earn transitions.** Move between beats with a specific connective ("that fix exposed a second bug" — not "moving on to..." or "with that said...").
+
 ## 5. Write the file
 
 Create `content/posts/<slug>.mdx` with frontmatter matching the shape `lib/posts.ts` validates:
@@ -66,14 +76,24 @@ summary: "<one-line summary>"
 
 The `date` **must** be a quoted string — an unquoted date is parsed by YAML as a `Date` object, not a string, and fails `lib/posts.ts`'s runtime validation.
 
-## 6. Tone and voice review
+## 6. Tighten before review
+
+Once all beats are drafted and assembled, do one self-edit pass over the whole post before handing it to `content-reviewer` — this is where bloat that's invisible beat-by-beat gets caught:
+
+- **Cut, don't pad.** Reread for sentences/clauses that repeat a point already made, or that hedge instead of asserting ("might potentially," "in some ways") — cut them. Aim to tighten by ~10–20% from the co-drafted length, not to hit a word count.
+- **Read the whole thing as continuous prose**, not beat-by-beat — check the piece flows as one argument, not three assembled sections.
+- **Kill any leftover scaffold language** — if a beat name or its framing ("Now for the mechanism...") leaked into the actual prose, cut it. The scaffold is invisible to the reader.
+
+Surface the tightened draft to the user for a look before moving to formal review.
+
+## 7. Tone and voice review
 
 Run the `content-reviewer` subagent against the drafted body, passing `docs/voice-sample.md` alongside it so the review checks both the standard tone brief (professional, direct, lightweight) and fit against the user's actual voice sample — not just generic AI-writing tells.
 
-## 7. Build check
+## 8. Build check
 
 Run `npm run build` to confirm the new post compiles and is picked up by `getAllPosts()`/`generateStaticParams`. MDX isn't typechecked, so this is the equivalent of the typecheck step in `add-project`/`add-experience`.
 
-## 8. Final sign-off
+## 9. Final sign-off
 
 Report the finished post back to the user for a final look before committing.
