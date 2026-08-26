@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readdirSync, statSync, readFileSync } from 'node:fs'
+import { readdirSync, statSync, readFileSync, existsSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
 const routes = new Set()
@@ -25,7 +25,8 @@ function scanFile(path) {
   let match
   while ((match = hrefPattern.exec(content))) {
     const href = match[1].replace(/\/$/, '') || '/'
-    if (!routes.has(href)) {
+    const isStaticAsset = existsSync(join(process.cwd(), 'public', href))
+    if (!routes.has(href) && !isStaticAsset) {
       errors.push(`${relative(process.cwd(), path)}: broken internal link "${match[1]}"`)
     }
   }
