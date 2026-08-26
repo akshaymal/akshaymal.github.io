@@ -15,16 +15,18 @@ function NavLinks({ className }: { className?: string }) {
       {navItems.map((item) => {
         const isActive =
           item.href === '/' ? pathname === '/' : pathname === item.href || pathname.startsWith(`${item.href}/`)
+        const Icon = item.icon
         return (
           <Link
             key={item.href}
             href={item.href}
             className={cn(
-              'text-sm font-medium transition-colors hover:text-primary',
+              'flex items-center gap-1.5 whitespace-nowrap text-sm font-medium transition-colors hover:text-primary',
               isActive ? 'text-primary' : 'text-muted-foreground',
               className
             )}
           >
+            <Icon className="h-4 w-4 shrink-0" />
             {item.label}
           </Link>
         )
@@ -37,17 +39,18 @@ export function Nav() {
   return (
     <header className="border-b border-border">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-        <div className="flex flex-1 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Mark className="h-6 w-6 shrink-0 text-foreground" />
-          <span className="whitespace-nowrap font-serif text-lg font-semibold">Akshay Malhotra</span>
+          <span className="whitespace-nowrap font-serif text-lg font-semibold sm:hidden lg:inline">Akshay Malhotra</span>
         </div>
 
-        <nav className="hidden flex-1 items-center justify-center gap-6 sm:flex">
+        <nav className="hidden flex-1 items-center justify-center gap-3 sm:flex lg:gap-6">
           <NavLinks />
         </nav>
 
-        <div className="flex flex-1 items-center justify-end gap-2">
-          <ContactDropdown className="hidden sm:block" />
+        <div className="flex shrink-0 items-center justify-end gap-2">
+          <ContactDropdown className="hidden lg:block" />
+          <ContactDropdown compact className="hidden sm:block lg:hidden" />
           <ContactDropdown compact className="sm:hidden" />
           <ThemeToggle />
         </div>

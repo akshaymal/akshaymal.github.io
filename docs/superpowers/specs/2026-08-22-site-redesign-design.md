@@ -28,7 +28,7 @@ Chosen after comparing three initial directions (dark/technical, warm/editorial,
 
 ## Navigation
 
-Config-driven top nav — a plain data array (`{label, href}[]`), not hardcoded JSX — rendered as a horizontal nav bar. Five items:
+Config-driven top nav — a plain data array (`{label, href, icon}[]`), not hardcoded JSX — rendered as a horizontal nav bar, each item with a small leading `lucide-react` icon. Five items:
 
 | Label | Route |
 |---|---|
