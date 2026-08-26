@@ -42,6 +42,8 @@ Started at four items with no overflow/"More" menu needed; the config-driven str
 
 No "Contact" nav item or route. Social/contact links live behind a Contact button in the header instead (see below) — a single-item Contact page would just duplicate what's already one click away. (This started as a persistent footer, moved to a floating pill per [#27](https://github.com/akshaymal/akshaymalhotra.dev/issues/27), then into the header's collapsible Contact dropdown per [#38](https://github.com/akshaymal/akshaymalhotra.dev/issues/38).)
 
+A Resume download button sits in the header alongside Contact — a plain `<a href="/resume.pdf" download>` (no server/API route, no client-side JS for the download itself), collapsing to an icon-only button below the `lg` breakpoint to keep the header on one line at tablet widths (see [#56](https://github.com/akshaymal/akshaymalhotra.dev/issues/56)).
+
 ## Pages
 
 ### `/` — Home (About combined)
@@ -77,7 +79,7 @@ Baked in during initial build, not bolted on after — matches the stated discov
 
 ## Component architecture
 
-- `components/nav.tsx` — replaces `components/app-sidebar.tsx`; renders the config-driven top nav array, plus the header's Contact button and theme toggle
+- `components/nav.tsx` — replaces `components/app-sidebar.tsx`; renders the config-driven top nav array, plus the header's Resume download button, Contact button, and theme toggle
 - `components/contact-dropdown.tsx` — the header Contact button's dropdown panel (social/contact links)
 - `components/theme-toggle.tsx` — new, dark/light toggle (system-preference default)
 - `app/page.tsx` — rewritten as Home/About
