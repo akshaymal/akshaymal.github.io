@@ -196,6 +196,20 @@
   animation: shiny-rotate 3s linear infinite;
 }
 
+.shiny-outline:hover,
+.shiny-outline:focus-visible {
+  background-image:
+    linear-gradient(hsl(var(--accent)), hsl(var(--accent))),
+    conic-gradient(
+      from var(--shiny-angle),
+      hsl(var(--primary) / 0.35) 0deg,
+      hsl(var(--primary)) 90deg,
+      hsl(var(--primary) / 0.35) 180deg,
+      hsl(var(--primary)) 270deg,
+      hsl(var(--primary) / 0.35) 360deg
+    );
+}
+
 @keyframes shiny-rotate {
   to {
     --shiny-angle: 360deg;
