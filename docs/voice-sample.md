@@ -1,10 +1,10 @@
 # Voice sample
 
-Saved once by the `add-blog-post` skill (see `.claude/skills/add-blog-post/SKILL.md`, step 2) and reused on every future post — both for co-drafting tone and by `content-reviewer`. These are transactional emails, not blog prose, but they show the traits worth preserving: terse, factual, no hedging, specific over vague ("over 10 business days," "Unit 525" vs "Unit 535," "Turn 16 as an intervention marshal").
+Saved once by the `add-blog-post` skill (see `.claude/skills/add-blog-post/SKILL.md`, step 2) and reused on every future post — both for co-drafting tone and by `content-reviewer`. These are transactional emails, not blog prose, but they show the traits worth preserving: terse, factual, no hedging, specific over vague. Identifying details (addresses, tracking/order numbers) have been replaced with placeholders — this file is committed to a public repo, so the specificity is illustrative, not the real values.
 
 ## Sample 1
 
-Hi Tivona and team,
+Hi [vendor] and team,
 
 I am writing to follow up on the refund request for my original booking.
 
@@ -14,15 +14,15 @@ Thanking you,
 
 ## Sample 2
 
-I am writing to report that all of my recent deliveries with Fetch have been delivered to the wrong address.
+I am writing to report that all of my recent deliveries with [delivery service] have been delivered to the wrong address.
 
-Specifically, my latest deliveries—Package ID 133885504 (a small box) and Package ID 133700959 (a small plastic bag)—were both left outside Unit 525. I actually reside in Unit 535. While I was able to locate and retrieve these packages myself, this has become a recurring issue.
+Specifically, my latest deliveries—Package ID [redacted] (a small box) and Package ID [redacted] (a small plastic bag)—were both left outside [unit A]. I actually reside in [unit B]. While I was able to locate and retrieve these packages myself, this has become a recurring issue.
 
-Could the team please investigate why my packages are not arriving at my correct doorstep in Unit 535 and resolve this for future deliveries?
+Could the team please investigate why my packages are not arriving at my correct doorstep in [unit B] and resolve this for future deliveries?
 
 ## Sample 3
 
-I have received your email and successfully set up the GoRacing app. I am excited to work with the team over the weekend.
+I have received your email and successfully set up the [motorsport app] app. I am excited to work with the team over the weekend.
 
 Could you please provide information on what Flag A, Flag B, and Flag C means?
 

@@ -31,12 +31,12 @@ Read/fetch every supporting input before drafting starts. These ground the post'
 
 Check whether `docs/voice-sample.md` exists.
 
-- **If missing:** ask the user for a sample of their own writing (a past post, an email, notes — anything in their own voice). Save it verbatim to `docs/voice-sample.md`. Explain that this is saved once and reused by this skill and by `content-reviewer` on every future post, so they won't be asked again.
+- **If missing:** ask the user for a sample of their own writing (a past post, an email, notes — anything in their own voice). This file is committed to a public repo, so before saving it, redact anything identifying — addresses, unit/order/tracking numbers, phone numbers, other people's names — replacing each with a bracketed placeholder (`[unit]`, `[order number]`) that preserves the *shape* of the specificity without the real value. Confirm the redacted version with the user, then save it to `docs/voice-sample.md`. Explain that this is saved once and reused by this skill and by `content-reviewer` on every future post, so they won't be asked again.
 - **If present:** read it silently and use it to calibrate tone during drafting. Don't re-ask.
 
 ## 3. Slug
 
-Derive a kebab-case slug from the title and confirm it's unique against existing files in `content/posts/`.
+Derive a kebab-case slug from the title and check it against existing files in `content/posts/`. If it collides, don't silently disambiguate — tell the user the slug is taken and ask them to either adjust the title (and re-derive) or confirm a specific alternate slug.
 
 ## 4. Co-draft the body via `doc-coauthoring`
 
