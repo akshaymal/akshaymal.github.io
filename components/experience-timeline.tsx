@@ -17,7 +17,7 @@ function formatRange(startDate: string, endDate: string | null): string {
 
 export function ExperienceTimeline({ entries }: { entries: ExperienceEmployer[] }) {
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12 min-[800px]:px-10">
+    <div className="mx-auto max-w-6xl px-6 py-12 min-[800px]:px-10">
       <ol className="relative flex flex-col gap-10 before:absolute before:inset-y-1 before:left-[7px] before:w-px before:bg-border min-[800px]:before:left-[15px]">
         {entries.filter((employer) => employer.positions.length > 0).map((employer) => {
           const positions = employer.positions
