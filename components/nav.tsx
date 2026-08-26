@@ -51,13 +51,13 @@ export function Nav() {
         </nav>
 
         <div className="flex shrink-0 items-center justify-end gap-2">
-          <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">
+          <Button asChild variant="ghost" size="sm" className="hidden lg:inline-flex shiny-outline">
             <a href="/resume.pdf" download="Akshay-Malhotra-Resume.pdf" rel="nofollow noreferrer">
               <Download className="h-4 w-4" />
               Resume
             </a>
           </Button>
-          <Button asChild variant="outline" size="icon" className="lg:hidden">
+          <Button asChild variant="ghost" size="icon" className="lg:hidden shiny-outline">
             <a href="/resume.pdf" download="Akshay-Malhotra-Resume.pdf" rel="nofollow noreferrer" aria-label="Download resume">
               <Download className="h-4 w-4" />
             </a>
