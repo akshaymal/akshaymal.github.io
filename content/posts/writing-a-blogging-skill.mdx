@@ -1,0 +1,34 @@
+---
+title: "Writing a Blogging Skill"
+date: "2026-08-26"
+summary: "Building a skill to draft blog posts, and why what makes it reliable is where it forces a stop — not how detailed its instructions are."
+---
+
+I asked Claude to build a skill for scaffolding blog posts. The first draft it proposed did what most AI-authoring setups do by default: ask for a title and a topic, then write the whole thing solo, present it as done. That's the exact failure mode a previous post on this site had fallen into — a draft attributed to me with no real back-and-forth. So before any code got written, I asked a lot of underspecified questions instead of accepting the plan: what structure should a post follow, what inputs should ground it, how do we keep it from sounding synthetic. Each answer narrowed the design by one more decision — three post categories with different beat structures, a reusable voice sample, drafting one beat at a time instead of one draft.
+
+## What the skill actually does
+
+The skill runs in nine steps. The ones that matter aren't the ones that write text.
+
+Step 1 doesn't ask for a topic — it asks for a category: technical, hobby-experience, or general. A build log and a story about a marathon shouldn't share a shape. Each category maps to its own three-beat scaffold:
+
+- **Technical** — Context → Mechanism → Implications
+- **Hobby-experience** — Hook → Story → Reflection
+- **General** — Hook → The Thing → So What
+
+None of those beat names ever become headings in the published post. They're a drafting order, not a template a reader sees.
+
+Before any of that, step 1 also demands a one-sentence thesis — not the topic, the actual point. If I can't state it in one sentence, that's what gets fixed before a word of the post exists.
+
+A few other steps do the real work:
+
+- **Step 2** asks for a writing sample once — three of my own emails, saved to `docs/voice-sample.md` — and reuses it on every post after.
+- **Step 4** is where drift usually happens in AI-authored writing, so it's built to make drift expensive: draft a beat, stop, take my edits, then draft the next one. This post is proof — the section above is the Context beat I signed off on before this section existed.
+- **Step 6** is a whole-post tightening pass once all three beats are assembled, built to catch the padding that's invisible one beat at a time.
+- **Step 7** runs `content-reviewer` against the voice sample instead of a generic tone brief, and **step 8** runs a real `npm run build` — before I ever see a finished draft.
+
+## Why this holds up
+
+The lesson here isn't specific to blog posts. It's that a skill's reliability comes from where it forces a stop, not from how much detail its instructions carry. Nine steps of instructions would have been just as easy to write with the drift built back in — draft solo, tighten later, hope the voice holds. What actually prevents that is three checkpoints placed on purpose: a thesis you have to state before drafting starts, a pause after every beat before the next one begins, and a whole-post tightening pass before anyone outside the process sees it.
+
+That's also why I'm confident this will keep working past this one post. The categories can be wrong, the beat names can change, the voice sample can go stale — those are all easy to fix later. What's load-bearing is the checkpoint structure itself, and that doesn't depend on getting the details right on the first try. A skill that asks you to stop and check is still safe to run again even when the content it produces needs work. A skill that doesn't isn't — no amount of instruction detail fixes that after the fact.
