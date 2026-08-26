@@ -2,10 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Download } from 'lucide-react'
 import { navItems } from '@/lib/nav-items'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ContactDropdown } from '@/components/contact-dropdown'
 import { Mark } from '@/components/mark'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 function NavLinks({ className }: { className?: string }) {
@@ -49,6 +51,17 @@ export function Nav() {
         </nav>
 
         <div className="flex shrink-0 items-center justify-end gap-2">
+          <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">
+            <a href="/resume.pdf" download="Akshay-Malhotra-Resume.pdf" rel="nofollow noreferrer">
+              <Download className="h-4 w-4" />
+              Resume
+            </a>
+          </Button>
+          <Button asChild variant="outline" size="icon" className="lg:hidden">
+            <a href="/resume.pdf" download="Akshay-Malhotra-Resume.pdf" rel="nofollow noreferrer" aria-label="Download resume">
+              <Download className="h-4 w-4" />
+            </a>
+          </Button>
           <ContactDropdown className="hidden lg:block" />
           <ContactDropdown compact className="hidden sm:block lg:hidden" />
           <ContactDropdown compact className="sm:hidden" />
