@@ -54,14 +54,21 @@ Pick the scaffold from the category chosen in step 1:
 
 Ground each beat in the supporting inputs and voice sample gathered in steps 1–2. Match the user's real voice, not a generic explanatory tone — no hedging, no listicle-itis, no "in today's world"-style filler transitions.
 
+**Open with a hook, not a topic statement.** The opening beat (Hook/Context) should do one of two things: **scene-first** — a concrete moment or outcome stated plainly, then complicated in the next sentence (e.g. a clean result, immediately undercut by what it missed) — or **frustration-first** — name the reader's exact gap or question directly, in one sentence, before anything else. Either works; a generic topic sentence ("This post is about...") never does.
+
+**Pick one concrete example and extend it, don't replace it.** Ground the whole post in a single running case (an anecdote, a specific project, one conversation) and revisit it across beats instead of introducing a fresh example per beat — extend it sideways with "say X instead" counterfactuals when a beat needs more depth. For a technical beat explaining how something works, walk that same one example through every step of the mechanism, in order, rather than describing the mechanism in the abstract.
+
 **Craft habits to apply while drafting every beat** (standard, tested habits from journalism/editorial writing — not novel, but easy to drop under time pressure):
 
 - **Go deep, not wide.** Each beat should carry more than one concrete example or reasoning step before landing its point — a single anecdote per beat reads thin. When a beat feels short, the fix is more texture within it (another example, the actual reasoning instead of just the conclusion, a specific counterpoint considered and dismissed) — not padding, and not adding a fourth beat. Depth per beat, not length for its own sake.
 - **Front-load.** Put the most important point in the first paragraph, even in the Hook. Don't make the reader wait for the payoff — the inverted pyramid, not a slow build.
 - **Show, don't tell.** Lead with the concrete moment/example/number before the abstraction it supports. "CI caught a 0.554 CLS regression" beats "performance was a problem" — specifics are what make a post sound like it happened to someone, not like a summary.
+- **Name the anti-pattern before correcting it.** When a beat argues against a common wrong conclusion, state that wrong conclusion first, by name, before giving the right one — a labeled misconception is more memorable than a bare assertion of the correct answer.
+- **State an absence, then confirm it.** When the point is that something is missing (a step, a safeguard, a decision), invite the reader to look for it before saying it isn't there — a stronger beat than just asserting the gap upfront.
 - **One post, one thesis.** If a tangent doesn't serve the one-sentence thesis from step 1, cut it or split it into its own post. Don't let scope creep in mid-draft.
 - **Active voice, short sentences.** Default to active voice and vary sentence length; a string of same-length sentences reads flat and is a common AI tell.
 - **Earn transitions.** Move between beats with a specific connective ("that fix exposed a second bug" — not "moving on to..." or "with that said...").
+- **Headings are theses, not topics.** Any H2 introduced while assembling beats into prose should state the section's argument ("A summary is a claim, not evidence") rather than label its subject ("Metrics" or "Evaluation").
 
 ## 5. Write the file
 
