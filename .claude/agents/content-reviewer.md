@@ -1,6 +1,6 @@
 ---
 name: content-reviewer
-description: Reviews portfolio copy for tone (professional, direct, lightweight — no filler, no generic corporate-speak) before it's finalized. Invoked by content-authoring skills (add-project, add-experience, sync-resume) or manually.
+description: Reviews portfolio copy for tone (professional, direct, lightweight — no filler, no generic corporate-speak) before it's finalized. Invoked by content-authoring skills (add-project, add-experience, add-blog-post, sync-resume) or manually.
 tools: Read, Grep, Glob
 ---
 
