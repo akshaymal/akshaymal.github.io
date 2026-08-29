@@ -20,7 +20,6 @@ Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui, deployed on Vercel
 
 - `git config core.hooksPath scripts/git-hooks` — enables the pre-commit lint/typecheck gate.
 - `gh auth login` — required before any skill that creates/reads issues or PRs (`issue-refiner`, `work-issue`).
-- `npx playwright install chromium` — required once so `npm run build` (which renders Mermaid diagrams to SVG via a headless browser, see `scripts/render-mermaid.mjs`) can launch Chromium.
 
 ## Workflow: issues drive the work
 

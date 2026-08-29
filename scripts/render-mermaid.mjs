@@ -3,10 +3,18 @@
 // SVGs under public/mermaid/ at build time. Runs as an npm "prebuild" hook,
 // before `next build`, so the MDX pipeline can embed plain <img> tags with
 // no client-side rendering.
+//
+// Uses @sparticuz/chromium (a self-contained, statically-bundled Chromium
+// binary meant for constrained/serverless build environments) rather than a
+// browser downloaded via `playwright install` — Vercel's build container is
+// missing shared libraries (libnspr4.so and others) that a normally-installed
+// Chromium needs and has no package manager access to install them with.
+// @sparticuz/chromium bundles what it needs and extracts to /tmp at runtime.
 import { createHash } from 'node:crypto'
 import { readFileSync, readdirSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { chromium } from '@playwright/test'
+import chromiumBinary from '@sparticuz/chromium'
 
 const postsDir = resolve(process.cwd(), 'content/posts')
 const outDir = resolve(process.cwd(), 'public/mermaid')
@@ -147,9 +155,17 @@ function collectDiagrams() {
   return diagrams
 }
 
-async function renderWithTheme(browser, code, themeVariables) {
-  const page = await browser.newPage()
+// @sparticuz/chromium launches with --single-process --no-zygote (tuned for
+// one-request-at-a-time serverless use), which doesn't reliably survive a
+// second page or a second launch reusing the same browser instance. A fresh
+// browser per render is slower but is what that mode actually supports.
+async function renderWithTheme(code, themeVariables) {
+  const browser = await chromium.launch({
+    executablePath: await chromiumBinary.executablePath(),
+    args: chromiumBinary.args,
+  })
   try {
+    const page = await browser.newPage()
     await page.setContent('<!doctype html><html><body></body></html>')
     await page.addScriptTag({ path: mermaidScriptPath })
     return await page.evaluate(
@@ -163,7 +179,7 @@ async function renderWithTheme(browser, code, themeVariables) {
       { code, themeVariables, id: `mermaid-${Math.random().toString(36).slice(2)}` }
     )
   } finally {
-    await page.close()
+    await browser.close()
   }
 }
 
@@ -177,18 +193,11 @@ async function main() {
   }
   mkdirSync(outDir, { recursive: true })
 
-  const browser = await chromium.launch()
-  try {
-    for (const [hash, code] of diagrams) {
-      const [light, dark] = await Promise.all([
-        renderWithTheme(browser, code, lightThemeVariables),
-        renderWithTheme(browser, code, darkThemeVariables),
-      ])
-      writeFileSync(join(outDir, `${hash}-light.svg`), light)
-      writeFileSync(join(outDir, `${hash}-dark.svg`), dark)
-    }
-  } finally {
-    await browser.close()
+  for (const [hash, code] of diagrams) {
+    const light = await renderWithTheme(code, lightThemeVariables)
+    const dark = await renderWithTheme(code, darkThemeVariables)
+    writeFileSync(join(outDir, `${hash}-light.svg`), light)
+    writeFileSync(join(outDir, `${hash}-dark.svg`), dark)
   }
 
   console.log(`Rendered ${diagrams.size} mermaid diagram(s) to public/mermaid/.`)

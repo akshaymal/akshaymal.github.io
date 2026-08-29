@@ -18,7 +18,6 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
-      - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: node scripts/check-bundle-size.mjs
       - run: node scripts/check-internal-links.mjs
@@ -33,7 +32,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: npx lhci autorun
 
@@ -47,6 +45,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
       - run: npm run test:viewport
