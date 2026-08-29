@@ -12,6 +12,14 @@ Prompting an agent to "add a blog" and accepting whatever it produces works for 
 
 ## The mechanism
 
+```mermaid
+flowchart LR
+    A["Issue<br/>agent-ready"] --> B["work-issue<br/>implement + self-verify"]
+    B --> C["Independent review<br/>fresh subagent"]
+    C --> D["CI<br/>lint, build, viewport, Lighthouse"]
+    D --> E["Human merge"]
+```
+
 **Issues are the source of truth.** Every planned change — feature, content, chore, bug — is a GitHub issue, not a TODO file or a chat history. Each one carries exactly one Type (`feature` / `content` / `chore` / `bug`), one Priority (`P1`–`P3`), and one Area (`content` / `ui` / `seo` / `infra` / `harness`) label. No free-form labels.
 
 **A rough issue doesn't get worked on.** The `issue-refiner` skill interviews whoever filed it — pressing for the actual outcome first, then the implementation options, until acceptance criteria and a definition of done are concrete and don't overlap with other open issues. Only then does it get the `agent-ready` label. This issue (blog infrastructure, plus this specific first post) went through that same interview before a single line of code was written.
@@ -28,6 +36,13 @@ Prompting an agent to "add a blog" and accepting whatever it produces works for 
 | Self-verify (in `work-issue`) | Build breaks, bundle bloat, broken links, viewport overflow |
 | Independent review subagent | Logic bugs and edge cases invisible to the implementer's own assumptions |
 | CI | All of the above, reproducibly, in a clean environment — plus Lighthouse |
+
+```mermaid
+pie title Verification touchpoints per change
+    "Self-verify checks" : 6
+    "CI jobs" : 3
+    "Independent review" : 1
+```
 
 **A human still merges.** Branch protection blocks direct pushes to `main` and requires CI to pass — but the real human-in-the-loop step is reviewing the diff before clicking merge, not a rubber-stamped approval. No merge happens without that.
 
