@@ -12,10 +12,11 @@ const postsDir = resolve(process.cwd(), 'content/posts')
 const outDir = resolve(process.cwd(), 'public/mermaid')
 const mermaidScriptPath = resolve(process.cwd(), 'node_modules/mermaid/dist/mermaid.min.js')
 
-const mermaidFencePattern = /```mermaid\n([\s\S]*?)\n```/g
-
 // Matches the site's warm palette (app/globals.css) so diagrams don't clash
-// with Mermaid's default theme.
+// with Mermaid's default theme. `themeVariables.xyChart.plotColorPalette`
+// must be a comma-separated list of hex colors, not hsl(...) — Mermaid
+// splits that string on "," to get individual colors, which breaks on the
+// commas inside hsl()'s own syntax.
 const lightThemeVariables = {
   background: 'hsl(38, 44%, 96%)',
   primaryColor: 'hsl(38, 25%, 90%)',
@@ -38,19 +39,19 @@ const lightThemeVariables = {
   pie6: 'hsl(27, 87%, 67%)',
   pieOuterStrokeColor: 'hsl(19, 75%, 44%)',
   pieOpacity: '1',
-  xyChart: JSON.stringify({
+  xyChart: {
     backgroundColor: 'hsl(38, 44%, 96%)',
     titleColor: 'hsl(33, 17%, 10%)',
-    xAxisLabelColor: 'hsl(33, 17%, 10%)',
     xAxisTitleColor: 'hsl(33, 17%, 10%)',
+    xAxisLabelColor: 'hsl(33, 17%, 10%)',
     xAxisTickColor: 'hsl(33, 17%, 10%)',
     xAxisLineColor: 'hsl(33, 17%, 10%)',
-    yAxisLabelColor: 'hsl(33, 17%, 10%)',
     yAxisTitleColor: 'hsl(33, 17%, 10%)',
+    yAxisLabelColor: 'hsl(33, 17%, 10%)',
     yAxisTickColor: 'hsl(33, 17%, 10%)',
     yAxisLineColor: 'hsl(33, 17%, 10%)',
-    plotColorPalette: 'hsl(19, 75%, 44%), hsl(12, 76%, 61%), hsl(173, 58%, 39%)',
-  }),
+    plotColorPalette: '#c4511c,#e76e50,#2a9d90,#274754,#e8c468',
+  },
 }
 
 const darkThemeVariables = {
@@ -75,23 +76,62 @@ const darkThemeVariables = {
   pie6: 'hsl(340, 75%, 55%)',
   pieOuterStrokeColor: 'hsl(19, 75%, 44%)',
   pieOpacity: '1',
-  xyChart: JSON.stringify({
+  xyChart: {
     backgroundColor: 'hsl(33, 17%, 10%)',
     titleColor: 'hsl(38, 44%, 96%)',
-    xAxisLabelColor: 'hsl(38, 44%, 96%)',
     xAxisTitleColor: 'hsl(38, 44%, 96%)',
+    xAxisLabelColor: 'hsl(38, 44%, 96%)',
     xAxisTickColor: 'hsl(38, 44%, 96%)',
     xAxisLineColor: 'hsl(38, 44%, 96%)',
-    yAxisLabelColor: 'hsl(38, 44%, 96%)',
     yAxisTitleColor: 'hsl(38, 44%, 96%)',
+    yAxisLabelColor: 'hsl(38, 44%, 96%)',
     yAxisTickColor: 'hsl(38, 44%, 96%)',
     yAxisLineColor: 'hsl(38, 44%, 96%)',
-    plotColorPalette: 'hsl(19, 75%, 44%), hsl(220, 70%, 50%), hsl(160, 60%, 45%)',
-  }),
+    plotColorPalette: '#c4511c,#2662d9,#2eb88a,#e88c30,#af57db',
+  },
 }
 
 function hashOf(code) {
   return createHash('sha256').update(code).digest('hex').slice(0, 12)
+}
+
+// Line-based fence scan (not a single multi-line regex) so a diagram whose
+// own source happens to contain a literal "```" can't truncate extraction
+// early or desync matching for fences later in the same file. A fence, per
+// CommonMark, is a line that is *only* backticks (the opening line may carry
+// an info string like "mermaid" after them).
+function extractMermaidFences(content, filename) {
+  const lines = content.split('\n')
+  const fences = []
+  let i = 0
+  while (i < lines.length) {
+    const opening = lines[i].trim()
+    if (opening === '```mermaid') {
+      const body = []
+      let j = i + 1
+      let closed = false
+      while (j < lines.length) {
+        if (lines[j].trim() === '```') {
+          closed = true
+          break
+        }
+        body.push(lines[j])
+        j++
+      }
+      if (!closed) {
+        throw new Error(`Unterminated \`\`\`mermaid fence in ${filename} (starting at line ${i + 1}).`)
+      }
+      const code = body.join('\n').trim()
+      if (code.length === 0) {
+        throw new Error(`Empty \`\`\`mermaid fence in ${filename} (starting at line ${i + 1}).`)
+      }
+      fences.push(code)
+      i = j + 1
+    } else {
+      i++
+    }
+  }
+  return fences
 }
 
 function collectDiagrams() {
@@ -100,9 +140,7 @@ function collectDiagrams() {
   for (const entry of readdirSync(postsDir)) {
     if (!entry.endsWith('.mdx')) continue
     const content = readFileSync(join(postsDir, entry), 'utf8')
-    let match
-    while ((match = mermaidFencePattern.exec(content))) {
-      const code = match[1]
+    for (const code of extractMermaidFences(content, entry)) {
       diagrams.set(hashOf(code), code)
     }
   }
