@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "postinstall": "playwright install chromium",
     "prebuild": "node scripts/render-mermaid.mjs",
     "build": "next build",
     "start": "next start",
