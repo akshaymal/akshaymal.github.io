@@ -39,3 +39,6 @@ next-env.d.ts
 
 # lighthouse ci reports
 .lighthouseci/
+
+# generated mermaid diagram SVGs (rebuilt by the "prebuild" script)
+/public/mermaid/

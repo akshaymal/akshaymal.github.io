@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import remarkGfm from 'remark-gfm'
 import { getAllPosts, getPostBySlug, formatPostDate } from '@/lib/posts'
+import { rehypeMermaid } from '@/lib/rehype-mermaid'
 
 export function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }))
@@ -27,7 +28,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       <div className="blog-prose mt-10">
         <MDXRemote
           source={post.content}
-          options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+          options={{ mdxOptions: { remarkPlugins: [remarkGfm], rehypePlugins: [rehypeMermaid] } }}
           components={{
             table: (props) => (
               <div className="overflow-x-auto">

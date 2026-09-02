@@ -13,7 +13,7 @@ Personal portfolio for Akshay Malhotra — senior software engineer. Fast, profe
 - **@vercel/analytics** for pageview analytics.
 - Fonts: Inter (sans) and Source Serif 4 (serif), self-hosted via `next/font/local` in `app/fonts.ts`, sourced from the `@fontsource-variable/inter` / `@fontsource-variable/source-serif-4` npm packages — no build-time network dependency on Google Fonts.
 - Tooling: ESLint (`eslint-config-next`), `tsc --noEmit` for type checking, **Playwright** (`@playwright/test`) for a viewport-overflow smoke test (`e2e/`), **Lighthouse CI** (`@lhci/cli`) for performance/accessibility/best-practices/SEO audits across every route, each category gated at a minimum score of 0.90.
-- No CMS — most content is authored directly in TypeScript (see `content/` below). The blog is the one exception: posts are MDX files with frontmatter (`content/posts/`), compiled to static HTML at build time via `next-mdx-remote/rsc` — no runtime server dependency, still compatible with the static export. No dedicated state-management library; the site has no client state beyond theme and current route.
+- No CMS — most content is authored directly in TypeScript (see `content/` below). The blog is the one exception: posts are MDX files with frontmatter (`content/posts/`), compiled to static HTML at build time via `next-mdx-remote/rsc` — no runtime server dependency, still compatible with the static export. ` ```mermaid ` fences in a post render as diagrams/charts: the `prebuild` npm script (`scripts/render-mermaid.mjs`) renders each one to static light/dark SVGs via **Mermaid**, driven through Playwright (`@playwright/test`) but launching **`@sparticuz/chromium`** — a self-contained Chromium build meant for constrained/serverless environments — rather than a browser fetched via `playwright install`, since Vercel's build container lacks the shared libraries a normally-installed Chromium needs and has no package manager to add them with. A rehype plugin (`lib/rehype-mermaid.ts`) swaps the fence for an `<img>` pair that toggles with the site's dark mode — no client-side JS shipped for rendering. No dedicated state-management library; the site has no client state beyond theme and current route.
 - Deployed on **Vercel**, which builds the static export and serves it from its edge network. Every push to `main` deploys to production; every PR gets a preview deployment (see the Vercel bot comment on PRs).
 
 ## Project structure
@@ -84,6 +84,7 @@ New entries are typically added via the `add-project` / `add-experience` Claude 
 
 ### `scripts/` — repo tooling, not app code
 
+- `render-mermaid.mjs` — runs automatically as the `prebuild` npm script, before `npm run build`; renders every ` ```mermaid ` fence in `content/posts/*.mdx` to static light/dark SVGs under `public/mermaid/` (gitignored, regenerated every build) via `@sparticuz/chromium`.
 - `check-bundle-size.mjs` — run after `npm run build`; fails if `.next/static/chunks` exceeds the KB budget in `bundle-budget.json`.
 - `check-internal-links.mjs` — crawls `app/` for valid routes and scans for `href`s pointing at internal paths that don't exist.
 - `git-hooks/pre-commit` — local pre-commit lint/typecheck gate, enabled once via `git config core.hooksPath scripts/git-hooks`.
@@ -103,7 +104,7 @@ This is tooling *for developing the site*, not something the site itself depends
 
 ### `.github/` — CI and repo templates
 
-- `workflows/ci.yml` — on every PR and push to `main`: `verify` job runs lint, typecheck, build, the bundle-size check, and the internal-link check; a `viewport` job runs the Playwright viewport-overflow smoke test; a `lighthouse` job runs Lighthouse CI across every route (all jobs blocking).
+- `workflows/ci.yml` — on every PR and push to `main`: `verify` job runs lint, typecheck, build, the bundle-size check, and the internal-link check; a `viewport` job installs Chromium then runs the Playwright viewport-overflow smoke test; a `lighthouse` job runs Lighthouse CI across every route (all jobs blocking).
 - `ISSUE_TEMPLATE/task.yml`, `PULL_REQUEST_TEMPLATE.md` — structure for filed issues and opened PRs.
 
 ### Root config files

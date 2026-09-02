@@ -193,7 +193,6 @@
     );
   background-origin: border-box;
   background-clip: padding-box, border-box;
-  animation: shiny-rotate 3s linear infinite;
 }
 
 .shiny-outline:hover,
@@ -208,6 +207,7 @@
       hsl(var(--primary)) 270deg,
       hsl(var(--primary) / 0.35) 360deg
     );
+  animation: shiny-rotate 0.6s ease-in-out;
 }
 
 @keyframes shiny-rotate {
@@ -217,7 +217,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .shiny-outline {
+  .shiny-outline:hover,
+  .shiny-outline:focus-visible {
     animation: none;
   }
 }
+
